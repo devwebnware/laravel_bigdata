@@ -1,0 +1,1 @@
+<img src="{{asset('assets/img/logo-rectangle.png')}}" class="w-100 ad-logo-image" alt="Admin Dashboard logo">

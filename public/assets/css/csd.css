@@ -1,0 +1,78 @@
+@import url(variable.css);
+
+ul.footer-menu li a::after,
+header.landing-header li.nav-item a::after,
+a.landing-normal-btn::after,
+form.talk-form input[type="submit"]:hover,
+.footer-card a.landing-btn:hover,
+section.landing-development-service .card:hover,
+a.landing-black-btn,
+a.landing-btn:hover,
+header.landing-header li.nav-item a.active::after,
+header.landing-header li.nav-item a:hover::after,
+a.landing-accordion-anchore,
+header.landing-header li.menu-button a {
+    background-color: var(--cmsOrange);
+}
+
+.footer-card,
+.landing-cta-2-inner,
+.landing-development-row:hover a.development-more,
+a.development-more:hover,
+.landing-cta,
+.landing-edge-inner,
+a.landing-accordion-anchore:hover,
+header.landing-header li.menu-button a:hover {
+    background-color: var(--cmsBlack);
+}
+
+header.landing-header li.nav-item a:hover,
+header.landing-header li.nav-item a.active {
+    color: var(--cmsBlack) !important;
+}
+
+header.landing-header li.menu-button a:hover {
+    color: white !important;
+}
+
+ul.footer-menu li a:hover,
+a.landing-btn {
+    color: var(--cmsBlack)
+}
+
+h5.sub-title {
+    color: var(--lightBlue);
+}
+
+.footer-card a.landing-btn:hover i,
+a.development-more,
+.landing-development-row:hover h3,
+a.landing-btn i,
+a.landing-normal-btn:hover,
+a.landing-btn:hover i,
+.title span,
+h2.title span {
+    color: var(--cmsOrange);
+}
+
+a.landing-black-btn:hover,
+.landing-development-row h5::after {
+    background-color: var(--lightBlue);
+}
+
+a.landing-btn i {
+    background-color: rgb(239 125 48 / 10%);
+}
+
+a.landing-btn:hover i {
+    background-color: white;
+}
+
+a.landing-btn:hover {
+    color: white;
+}
+
+.section-after-left::after,
+.section-after-right::after {
+    filter: brightness(0) contrast(0.78);
+}

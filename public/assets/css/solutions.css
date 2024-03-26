@@ -1,0 +1,185 @@
+.section {
+    padding: 80px 0px;
+}
+
+.bg-image {
+    background-image: url("../img/about.png");
+}
+
+.blue-bg-solutions {
+    background-color: #122045;
+    color: #9faac6;
+}
+
+.learn-more-btn,
+.learn-more-btn:hover {
+    color: #42befe;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.solution-services {
+    background-color: #EBF2FF;
+}
+
+.solution-services .card:hover i {
+    color: #2188e3;
+}
+
+.solution-services .card:hover {
+    box-shadow: 15px 15px 38px 0 rgb(0 0 0 / 10%);
+}
+
+.solution-services .job-box.blue-side-mark {
+    border: none !important;
+}
+
+.job-box {
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+
+.job-box.blue-side-mark:before {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0%;
+    top: 0;
+    left: 0;
+    z-index: -1 !important;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+
+.job-box.blue-side-mark:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 0px !important;
+    right: 0px !important;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg)!important;
+    background: #122045;
+}
+
+.job-box.blue-side-mark:hover:after {
+    opacity: 1;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.job-box.blue-side-mark:hover {
+    box-shadow: 15px 15px 38px 0 rgb(0 0 0 / 10%);
+    -webkit-box-shadow: 15px 15px 38px 0 rgb(0 0 0 / 10%);
+}
+
+.job-box.blue-side-mark:hover .card-title {
+    color: white !important;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+
+.job-box.blue-side-mark:hover .card-text {
+    color: white !important;
+    transition: all 0.3s ease-in-out;
+    -webkit-transition: all 0.3s ease-in-out;
+}
+
+.sidenav {
+    position: fixed;
+    z-index: 1;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    padding: 10px 0;
+}
+
+.sidenav a {
+    text-decoration: none;
+    display: block;
+    border: 1px solid black;
+    color: #333;
+}
+
+.active {
+    background: linear-gradient(238deg, rgba(34, 134, 228, 1) 0%, rgba(18, 199, 210, 1) 100%) !important;
+    color: white !important;
+    border: none !important;
+}
+
+
+/* #advisory {
+  background-color: grey;
+}
+#engineering {
+  background-color: rgb(27, 27, 70);
+}
+#enhancements {
+  background-color: blue; 
+}
+#experts {
+  background-color: red;
+} */
+
+.sidenav .nav-sections {
+    cursor: pointer;
+    font-size: 12px;
+    transform: rotate(90deg);
+    padding: 5px 3px;
+    position: relative;
+    margin: 80px 0;
+}
+
+.sevices-nav {
+    position: relative;
+}
+
+.job-box.blue-side-mark .after-service {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    opacity: 0.3;
+    z-index: 2;
+    color: #13cad2;
+}
+
+.job-box.blue-side-mark:hover .after-service {
+    opacity: 0.5;
+    color: #fff;
+}
+
+.job-box.blue-side-mark .after-service span {
+    font-size: 60px;
+    transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
+}
+
+.job-box.blue-side-mark:hover .after-service span {
+    font-size: 80px;
+    transition: all 0.3s linear;
+    -webkit-transition: all 0.3s linear;
+}
+
+
+/* -------------------------------------------------- */
+
+.categories {
+    font-size: 12px;
+}
+
+@media(min-width:1440px) {
+    .categories {
+        font-size: 14px;
+    }
+}
+
+.modal-open {
+    overflow: scroll !important;
+    overflow-x: hidden !important;
+}

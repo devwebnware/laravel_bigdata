@@ -1,0 +1,170 @@
+html,
+body {
+    height: 100%;
+    position: relative;
+}
+
+.vertical-section {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sticky-slide-sec-1 {
+    background-image: url(../../../assets/img/gradient-pattern-1.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.sticky-slide-sec-2 {
+    background-image: url(../../../assets/img/gradient-pattern-2.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.sticky-slide-sec-3 {
+    background-image: url(../../../assets/img/gradient-pattern-3.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.sticky-slide-sec-4 {
+    background-image: url(../../../assets/img/gradient-pattern-4.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.sticky-slide-sec main {
+    overflow-x: hidden;
+    display: flex;
+    position: sticky;
+    top: 0;
+}
+
+.sticky-slide-sec section {
+    min-width: 90vw;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cirlce-image-div {
+    position: relative;
+}
+
+.first-button,
+.second-button,
+.third-button,
+.fourth-button {
+    position: absolute;
+    margin: 10px;
+    padding: 65px;
+    opacity: 0;
+    width: 50%;
+}
+
+.first-button {
+    top: 5%;
+    left: 24%;
+}
+
+.second-button {
+    top: 40%;
+    right: 57%;
+    transform: rotate(90deg);
+}
+
+.third-button {
+    bottom: 5%;
+    right: 24%;
+}
+
+.fourth-button {
+    top: 40%;
+    left: 40%;
+    transform: rotate(90deg);
+}
+
+.circle-text-content .tab-pane {
+    padding: 14px;
+    font-weight: 800;
+    position: absolute;
+    transform: translateY(-50%);
+    width: 29.5%;
+    height: 38%;
+    text-align: center;
+    top: 50%;
+    right: 20%;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 4px solid #1AAAD1;
+}
+
+.circle-text-content .tab-pane:first-child {
+    border-color: #067FDE;
+}
+
+.circle-text-content .tab-pane:nth-child(2) {
+    border-color: #eeb649;
+}
+
+.circle-text-content .tab-pane:last-child {
+    border-color: #fe813f;
+}
+
+.circle-text-content .tab-pane p {
+    font-size: 15px !important;
+}
+
+.circle-text-content p {
+    margin: 0;
+}
+
+.circle-image {
+    width: 80%;
+}
+
+@media only screen and (max-width: 767px) {
+    .circle-text-content .tab-pane p:last-child {
+        font-size: 12px !important;
+    }
+    .circle-text-content .tab-pane p:last-child {
+        font-size: 9px !important;
+    }
+    .circle-image {
+        width: 100%;
+    }
+    .fourth-button {
+        top: 40%;
+        left: 57%;
+        transform: rotate(90deg);
+    }
+    .circle-text-content .tab-pane {
+        padding: 14px;
+        font-weight: 800;
+        position: absolute;
+        transform: translateY(-50%);
+        width: 34%;
+        height: 36%;
+        text-align: center;
+        top: 50%;
+        right: 0;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        border-radius: 50%;
+        border: 4px solid #1AAAD1;
+    }
+}
+
+.display-7 {
+    font-size: 2.5rem;
+}

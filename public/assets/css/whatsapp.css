@@ -1,0 +1,263 @@
+:root {
+    --fontSize: 14px;
+    --transition: .5s;
+    --mainColor: #25D366 !important;
+    --whiteColor: #ffffff;
+    --blackColor: #262A37;
+    --lightBlackColor: #212121;
+    --gradientColor: linear-gradient(44.44deg, #128C7E 7.79%, #075E54 94.18%) !important;
+    --paragraphColor: #716c80;
+    --fontFamily: 'Inter', sans-serif;
+    --lightBoxShadow: 0px 25px 50px 5px rgba(0, 0, 0, 0.05);
+    --btnShadow:0px 5px 20px rgb(17 122 201 / 25%);
+}
+
+body,
+small {
+    font-family: Poppins!important;
+    color: #333!important;
+    font-weight: 400!important
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: Gilroy!important;
+    line-height: 1.1!important;
+    font-weight: 600!important
+}
+
+.form-text {
+    font-size: 18px !important;
+}
+
+.features-inner-card {
+    margin-bottom: 25px;
+    background: rgb(15 116 193 / 15%) !important;
+    border-radius: 25px;
+    padding: 30px;
+}
+
+.features-inner-card.with-box-shadow {
+    background: var(--whiteColor) !important;
+    -webkit-box-shadow:var(--lightBoxShadow);
+    box-shadow: var(--lightBoxShadow);
+}
+
+.key-features-card .icon i {
+    display: inline-block;
+    height: 75px;
+    width: 75px;
+    line-height: 75px;
+    background: var(--gradientColor) !important;
+    color: var(--whiteColor);
+    border-radius: 0px 100px 100px 100px;
+    text-align: center;
+    font-size: 30px;
+    -webkit-transition: var(--transition);
+    transition: var(--transition);
+    transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+}
+
+.key-features-card.bg-color-two::before {
+    background: var(--gradientColor) !important;
+}
+
+.key-features-card:hover .icon i {
+    background: #fff !important;
+}
+
+.key-features-card:hover .icon i::before {
+    background: var(--gradientColor);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.features-box-card .icon.bg2 i {
+    background: var(--gradientColor) !important;
+}
+
+.features-box-card .icon i {
+    background: var(--gradientColor) !important;
+}
+
+.default-btn {
+    -webkit-box-shadow: var(--btnShadow)  !important;
+    box-shadow:  var(--btnShadow) !important;
+}
+
+.default-btn:hover {
+    background-color: var(--lightBlackColor) !important;
+    color: var(--whiteColor);
+    -webkit-box-shadow: 0px 12px 35px rgb(60 64 68 / 25%) !important;
+    box-shadow: 0px 12px 35px rgb(60 64 68 / 25%) !important;
+}
+
+.feedback-swiper-wrap-slides .swiper-button-prev::before,
+.feedback-swiper-wrap-slides .swiper-button-next::before {
+    background: var(--gradientColor) !important;
+}
+
+.features-inner-card .icon i {
+    background: var(--gradientColor) !important;
+}
+
+.feedback-swiper-wrap-slides .swiper-button-prev,
+.feedback-swiper-wrap-slides .swiper-button-next {
+    -webkit-box-shadow: 0px 12px 35px rgb(17 122 201 / 25%) !important;
+    box-shadow: 0px 12px 35px rgb(17 122 201 / 25%) !important;
+}
+
+.banner-wrapper-area .shape13 {
+    right: 44% !important;
+    top: 20% !important;
+}
+
+.white-btn::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    -webkit-transition: var(--transition);
+    transition: var(--transition);
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    border-radius: 30px;
+}
+
+.white-btn {
+    background: var(--whiteColor);
+    color: var(--lightBlackColor);
+    -webkit-box-shadow:  var(--btnShadow) !important;
+    box-shadow:  var(--btnShadow) !important;
+    z-index: 1;
+    border: none;
+    position: relative;
+    padding: 12px 35px;
+    border-radius: 30px;
+    display: inline-block;
+    -webkit-transition: var(--transition);
+    transition: var(--transition);
+    font-size: var(--fontSize);
+    font-weight: 600;
+}
+
+.white-btn:hover {
+    background-color: var(--lightBlackColor) !important;
+    color: #fff;
+    -webkit-box-shadow: 0px 12px 35px rgb(60 64 68 / 25%) !important;
+    box-shadow: 0px 12px 35px rgb(60 64 68 / 25%) !important;
+}
+
+.bullet-points {
+    margin-top: 30px;
+    padding: 0;
+}
+
+.bullet-points li {
+    display: inline-block;
+}
+
+.bullet-points li.dots-design {
+    background-color: #004476;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+.light-green-bg {
+    background-color: #F6F9FB;
+}
+
+.bg-popup {
+    background: var(--gradientColor) !important;
+}
+
+.features-item .icon {
+    width: 70px;
+    height: 70px;
+    font-size: 35px;
+    position: relative;
+    border-radius: 50%;
+    color: var(--whiteColor);
+    -webkit-transition: var(--transition);
+    transition: var(--transition);
+    background: var(--gradientColor);
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+}
+
+.green-gradient-card {
+    border-radius: 15px;
+    position: relative;
+    z-index: 1;
+    transition: all .3s linear !important;
+    -webkit-transition: all .3s linear !important;
+}
+
+.green-gradient-card::after {
+    content: "";
+    position: absolute;
+    border-radius: 15px;
+    width: 0;
+    height: 0;
+    bottom: 0;
+    left: 0;
+    transition: all .3s linear;
+    -webkit-transition: all .3s linear;
+    background: var(--gradientColor) !important;
+    z-index: -1;
+}
+
+.green-gradient-card:hover:after {
+    width: 100%;
+    height: 100%;
+}
+
+.green-gradient-card:hover h3,
+.green-gradient-card:hover p {
+    transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    color: var(--whiteColor) !important;
+}
+
+.green-gradient-card:hover .icon {
+    transition: all .3s ease-in-out;
+    -webkit-transition: all .3s ease-in-out;
+    background: var(--whiteColor) !important;
+    color: #004476;
+    border: 1px solid #004476;
+}
+
+.green-bg {
+    background: var(--gradientColor) !important;
+    color: var(--whiteColor) !important;
+    transition: all .3s ease-in-out !important;
+    -webkit-transition: all .3s ease-in-out !important;
+}
+
+.green-bg h2{
+    color:var(--whiteColor) !important;
+}
+
+.screenshots-tabs .nav-tabs .nav-item .nav-link {
+color: var(--blackColor);
+}
+
+.green-bg{
+    background: var(--gradientColor) !important;
+}
+.fs-28{
+    font-size: 28px;
+}
+.whatsapp-bg{
+    background-image: url('../img/whatsapp-bg.png');
+}

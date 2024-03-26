@@ -1,0 +1,79 @@
+/*popup btn css*/
+.video-popup a {
+    position: relative;
+    width: 65px;
+    height: 65px;
+    display: inline-block;
+    background: yellow;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    text-align: center;
+    line-height: 65px;
+    color: #fff;
+  }
+  .video-popup a i {
+    margin-left: 8%;
+  }
+  .video-popup a i:before {
+    font-size: 21px;
+  }
+  .video-popup a:hover {
+    background: yellow;
+    color: #fff;
+  }
+  .video-popup a:hover span {
+    border-color: yellow;
+  }
+  .video-popup a span {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    animation: circle-fade-before 2s infinite ease-in-out;
+    -webkit-animation: circle-fade-before 2s infinite ease-in-out;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+  }
+  .video-popup a .circle-2 {
+    animation: circle-fade-after 2s infinite ease-in-out;
+    -webkit-animation: circle-fade-after 2s infinite ease-in-out;
+  }
+  .video-popup > span {
+    margin-left: 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: #1b1d21;
+    font-family: "Montserrat", sans-serif;
+    letter-spacing: 0.5px;
+  }
+  .video-popup .btn-inner {
+    display: inline-block;
+    border-radius: 50%;
+  }
+  
+  @keyframes circle-fade-before {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.8);
+      opacity: 1;
+    }
+  }
+  @keyframes circle-fade-after {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2.5);
+      opacity: 1;
+    }
+  }
