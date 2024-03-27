@@ -15,7 +15,7 @@ class ListingController extends Controller
     protected $_action;
     public function index()
     {
-        $listings = Listing::all();
+        $listings = Listing::paginate(10);
         return view('backend.listings.index', compact('listings'));
     }
 
