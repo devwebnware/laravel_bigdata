@@ -13,7 +13,6 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 
 require __DIR__ . '/auth.php';
 
-Route::get('notice/view', [DashboardController::class, 'viewNotice'])->name('notice.show');
 
 Route::group(['middleware' => ['role:admin']], function () {
     Route::resource('user', UserController::class);
@@ -56,13 +55,12 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::get('assignedBadge/{id}', [DashboardController::class, 'assignedBadges'])->name('assignedBadge.view');
 
     Route::get('/activity/logs', [DashboardController::class, 'activityLog'])->name('activityLog');
+    Route::get('notice/view', [DashboardController::class, 'viewNotice'])->name('notice.show');
     Route::get('reminders', [DashboardController::class, 'salesReminder'])->name('reminder.all');
     Route::get('sales/report', [DashboardController::class, 'salesReport'])->name('sales.report');
     Route::post('sales/report/filter', [DashboardController::class, 'filterSalesReport'])->name('sales.filterReport');
     Route::get('dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
-    Route::get('/register', [RegisteredUserController::class, 'create'])
-        ->middleware('guest')
-        ->name('register');
+    Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 
     Route::post('/register', [RegisteredUserController::class, 'store'])
         ->middleware('guest');
@@ -74,6 +72,7 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::resource('listings', ListingController::class);
     Route::get('listings/data/export', [ListingController::class, 'export'])->name('listings.data.export');
     Route::get('listings/data/import', [ListingController::class, 'import'])->name('listings.data.import');
+    Route::post('listings/data/filter', [ListingController::class, 'filter'])->name('listings.filter');
     Route::post('listings/data/handel/import', [ListingController::class, 'handelImport'])->name('listings.data.handel.import');
 });
 

@@ -10,7 +10,7 @@
 </div>
 <div class="card mb-3 card-bordered mt-3 card-preview">
     <div class="card-inner">
-        <form method="POST" action="{{ route('listings.filter')}}">
+        <form method="POST" action="{{ route('listings.filter')}}">  
             @csrf
             <div class="row">
                 <div class="col-md-3 mb-2">
@@ -107,7 +107,7 @@
 </form>
 @push('custom-js')
 <script>
-    // ** If changes were made here then make sure to update (backend.listings.filter) view
+    // ** If changes were made here then make sure to update (backend.listings.index) view
     // Form submittion for listing delete
     function deleteRequest(name, id) {
         event.preventDefault();
