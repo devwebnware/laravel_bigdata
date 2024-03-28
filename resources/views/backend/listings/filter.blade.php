@@ -45,6 +45,14 @@
                     </select>
                 </div>
                 <div class="col-md-3 mb-2">
+                    <label class="form-label">Full Address</label>
+                    <input type="text" name="full_address" id="full_address" class="form-control" />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="form-label">City</label>
+                    <input type="text" name="city" id="city" class="form-control" />
+                </div>
+                <div class="col-md-3 mb-2">
                     <label class="form-label">Start Date</label>
                     <input type="date" name="start_date" id="start_date" class="form-control" />
                 </div>
@@ -60,31 +68,130 @@
         </form>
     </div>
 </div>
-<div class="card card-bordered mt-3 card-preview">
-    <table class="table table-tranx">
+<div class="card card-bordered table-responsive mt-3 card-preview">
+<table class="table table-tranx">
         <thead>
             <tr class="tb-tnx-head">
                 <th class="tb-tnx-id"><span class="">#</span></th>
-                <th class="tb-tnx-info">Listing Name</th>
-                <th class="tb-tnx-info">Category Name</th>
-                <th class="tb-tnx-info">Tag Name</th>
-                <th class="tb-tnx-info">last Updated On</th>
-                <th class="tb-tnx-info">Created By</th>
-                <th class="tb-tnx-info text-center">Actions</th>
+                @foreach($columnNames as $column)
+                @if($column !== 'id' && $column !== 'created_by' && $column !== 'created_at' && $column !== 'updated_at')
+                <th class="tb-tnx-info">{{ $column }}</th>
+                @endif
+                @endforeach
             </tr>
         </thead>
         <tbody>
             @php
-                $serialNumber = ($listings->currentPage() - 1) * $listings->perPage() + 1;
+            $serialNumber = ($listings->currentPage() - 1) * $listings->perPage() + 1;
             @endphp
             @forelse($listings as $key => $listing)
             <tr>
-                <td>{{ $serialNumber++ }}</td>
-                <td>{{ $listing->name }}</td>
-                <td>{{ $listing->category->name }}</td>
-                <td>{{ $listing->tag->name }}</td>
-                <td>{{ $listing->updated_at }}</td>
-                <td>{{ $listing->user->name }}</td>
+                <td>{{ substr($serialNumber++,0, 20) }}</td>
+                <!-- <td>{{ substr($listing->id,0, 20) }}</td> -->
+                <td>{{ substr($listing->name,0, 20) }}</td>
+                <td>{{ substr($listing->category->name,0, 20) }}</td>
+                <td>{{ substr($listing->tag->name,0, 20) }}</td>
+                <!-- <td>{{ substr($listing->user->name,0, 20) }}</td> -->
+                <!-- <td>{{ substr($listing->created_at,0, 20) }}</td> -->
+                <!-- <td>{{ substr($listing->updated_at,0, 20) }}</td> -->
+                <td>{{ substr($listing->query,0, 20) }}</td>
+                <td>{{ substr($listing->site,0, 20) }}</td>
+                <td>{{ substr($listing->type,0, 20) }}</td>
+                <td>{{ substr($listing->subtypes,0, 20) }}</td>
+                <td>{{ substr($listing->phone,0, 20) }}</td>
+                <td>{{ substr($listing->full_address,0, 20) }}</td>
+                <td>@if(isset($listing->borough))
+                    {{ substr($listing->borough,0, 20)}}
+                    @else
+                    N/A
+                    @endif
+                </td>
+                <td>@if(isset($listing->street))
+                    {{ substr($listing->street,0, 20) }}
+                    @else
+                    N/A
+                    @endif
+                </td>
+                <td>{{ substr($listing->city,0, 20) }}</td>
+                <td>{{ substr($listing->postal_code,0, 20) }}</td>
+                <td>{{ substr($listing->state,0, 20) }}</td>
+                <td>{{ substr($listing->us_state,0, 20) }}</td>
+                <td>{{ substr($listing->country,0, 20) }}</td>
+                <td>{{ substr($listing->country_code,0, 20) }}</td>
+                <td>{{ substr($listing->latitude,0, 20) }}</td>
+                <td>{{ substr($listing->longitude,0, 20) }}</td>
+                <td>{{ substr($listing->time_zone,0, 20) }}</td>
+                <td>{{ substr($listing->plus_code,0, 20) }}</td>
+                <td>{{ substr($listing->area_service,0, 20) }}</td>
+                <td>{{ substr($listing->rating,0, 20) }}</td>
+                <td>{{ substr($listing->reviews,0, 20) }}</td>
+                <td>{{ substr($listing->reviews_link,0, 20) }}</td>
+                <td>{{ substr($listing->reviews_per_score,0, 20) }}</td>
+                <td>{{ substr($listing->reviews_per_score_1,0, 20) }}</td>
+                <td>{{ substr($listing->reviews_per_score_2,0, 20) }}</td>
+                <td>{{ substr($listing->reviews_per_score_3,0, 20) }}</td>
+                <td>{{ substr($listing->reviews_per_score_4,0, 20) }}</td>
+                <td>{{ substr($listing->reviews_per_score_5,0, 20) }}</td>
+                <td>{{ substr($listing->photos_count,0, 20) }}</td>
+                <td>{{ substr($listing->photo,0, 20) }}</td>
+                <td>{{ substr($listing->street_view,0, 20) }}</td>
+                <td>{{ substr($listing->located_in,0, 20) }}</td>
+                <td>{{ substr($listing->working_hours,0, 20) }}</td>
+                <td>{{ substr($listing->working_hours_old_format,0, 20) }}</td>
+                <td>{{ substr($listing->other_hours,0, 20) }}</td>
+                <td>{{ substr($listing->popular_times,0, 20) }}</td>
+                <td>{{ substr($listing->business_status,0, 20) }}</td>
+                <td>{{ substr($listing->about,0, 20) }}</td>
+                <td>{{ substr($listing->range,0, 20) }}</td>
+                <td>{{ substr($listing->posts,0, 20) }}</td>
+                <td>{{ substr($listing->logo,0, 20) }}</td>
+                <td>{{ substr($listing->description,0, 20) }}</td>
+                <td>{{ substr($listing->verified,0, 20) }}</td>
+                <td>{{ substr($listing->owner_id,0, 20) }}</td>
+                <td>{{ substr($listing->owner_title,0, 20) }}</td>
+                <td>{{ substr($listing->owner_link,0, 20) }}</td>
+                <td>{{ substr($listing->reservation_links,0, 20) }}</td>
+                <td>{{ substr($listing->booking_appointment_link,0, 20) }}</td>
+                <td>{{ substr($listing->menu_link,0, 20) }}</td>
+                <td>{{ substr($listing->order_links,0, 20) }}</td>
+                <td>{{ substr($listing->location_link,0, 20) }}</td>
+                <td>{{ substr($listing->place_id,0, 20) }}</td>
+                <td>{{ substr($listing->google_id,0, 20) }}</td>
+                <td>{{ substr($listing->cid,0, 20) }}</td>
+                <td>{{ substr($listing->reviews_id,0, 20) }}</td>
+                <td>{{ substr($listing->located_google_id,0, 20) }}</td>
+                <td>{{ substr($listing->email_1,0, 20) }}</td>
+                <td>{{ substr($listing->email_1_full_name,0, 20) }}</td>
+                <td>{{ substr($listing->email_1_title,0, 20) }}</td>
+                <td>{{ substr($listing->email_2,0, 20) }}</td>
+                <td>{{ substr($listing->email_2_full_name,0, 20) }}</td>
+                <td>{{ substr($listing->email_2_title,0, 20) }}</td>
+                <td>{{ substr($listing->email_3,0, 20) }}</td>
+                <td>{{ substr($listing->email_3_full_name,0, 20) }}</td>
+                <td>{{ substr($listing->email_3_title,0, 20) }}</td>
+                <td>{{ substr($listing->phone_1,0, 20) }}</td>
+                <td>{{ substr($listing->phone_2,0, 20) }}</td>
+                <td>{{ substr($listing->phone_3,0, 20) }}</td>
+                <td>{{ substr($listing->facebook,0, 20) }}</td>
+                <td>{{ substr($listing->instagram,0, 20) }}</td>
+                <td>{{ substr($listing->linkedin,0, 20) }}</td>
+                <td>{{ substr($listing->medium,0, 20) }}</td>
+                <td>{{ substr($listing->reddit,0, 20) }}</td>
+                <td>{{ substr($listing->skype,0, 20) }}</td>
+                <td>{{ substr($listing->snapchat,0, 20) }}</td>
+                <td>{{ substr($listing->telegram,0, 20) }}</td>
+                <td>{{ substr($listing->whatsapp,0, 20) }}</td>
+                <td>{{ substr($listing->twitter,0, 20) }}</td>
+                <td>{{ substr($listing->vimeo,0, 20) }}</td>
+                <td>{{ substr($listing->youtube,0, 20) }}</td>
+                <td>{{ substr($listing->github,0, 20) }}</td>
+                <td>{{ substr($listing->crunchbase,0, 20) }}</td>
+                <td>{{ substr($listing->website_title,0, 20) }}</td>
+                <td>{{ substr($listing->website_generator,0, 20) }}</td>
+                <td>{{ substr($listing->website_description,0, 20) }}</td>
+                <td>{{ substr($listing->website_keywords,0, 20) }}</td>
+                <td>{{ substr($listing->website_has_fb_pixel,0, 20) }}</td>
+                <td>{{ substr($listing->website_has_google_tag,0, 20) }}</td>
                 <td class="nk-tb-col text-center nk-tb-col-tools">
                     <a href="{{ route('listings.edit', ['listing' => $listing->id]) }}"><em style="font-size: 20px;" class="icon ni ni-edit"></em></a>
                     <a class="ml-2" href="#" onclick="deleteRequest('{{$listing->name}}','{{$listing->id}}')"><em style="font-size: 20px; color: red;" class="icon ni ni-trash"></em></em></a>
@@ -92,7 +199,7 @@
             </tr>
             @empty
             <tr class="text-center">
-                <td colspan="5">No Data Available</td>
+                <td colspan="95">No Data Available</td>
             </tr>
             @endforelse
         </tbody>

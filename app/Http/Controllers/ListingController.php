@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Exports\ListingsExport;
 use App\Jobs\ImportDataJob;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ListingController extends Controller
@@ -17,11 +18,13 @@ class ListingController extends Controller
     protected $_action;
     public function index()
     {
+        $tableName = 'listings';
+        $columnNames = Schema::getColumnListing($tableName);
         $categories = Category::select('id', 'name')->get();
         $tags = Tag::select('id', 'name')->get();
         $users = User::select('id', 'name')->get();
         $listings = Listing::paginate(10);
-        return view('backend.listings.index', compact('listings', 'categories', 'tags', 'users'));
+        return view('backend.listings.index', compact('listings', 'categories', 'tags', 'users', 'columnNames'));
     }
 
     public function create()
@@ -102,6 +105,8 @@ class ListingController extends Controller
 
     public function filter(Request $request)
     {
+        $tableName = 'listings';
+        $columnNames = Schema::getColumnListing($tableName);
         $query = Listing::query();
         $categories = Category::select('id', 'name')->get();
         $tags = Tag::select('id', 'name')->get();
@@ -109,6 +114,14 @@ class ListingController extends Controller
 
         if ($request->filled('listing_name')) {
             $query->where('name', 'like', '%' . $request->listing_name . '%');
+        }
+
+        if ($request->filled('full_address')) {
+            $query->where('full_address', 'like', '%' . $request->full_address . '%');
+        }
+
+        if ($request->filled('city')) {
+            $query->where('city', 'like', '%' . $request->city . '%');
         }
 
         if ($request->filled('category_id')) {
@@ -135,6 +148,6 @@ class ListingController extends Controller
 
         $listings = $query->paginate(10);
 
-        return view('backend.listings.filter', compact('listings', 'categories', 'tags', 'users'));
+        return view('backend.listings.filter', compact('listings', 'categories', 'tags', 'users', 'columnNames'));
     }
 }
