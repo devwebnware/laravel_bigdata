@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use PDF;
+use App\Models\Tag;
+use App\Models\Listing;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -10,10 +12,21 @@ class DashboardController extends Controller
 {
 	public function dashboard()
 	{
-		if (auth()->user()) {
-
-
-			return view('dashboard');
+		if (auth()->check()) {
+			$categoriesCount = Category::count();
+			$tagsCount = Tag::count();
+			$listings = Listing::all();
+			
+			$cities = $listings->pluck('city')->filter()->unique();
+			$states = $listings->pluck('state')->filter()->unique();
+			$countries = $listings->pluck('country')->filter()->unique();			
+			$categories = Category::select('id', 'name')->get();
+			$tags = Tag::select('id', 'name')->get();
+			$users = User::select('id', 'name')->get();
+			
+			$listingsCount = $listings->count();
+			
+			return view('dashboard', compact('categoriesCount', 'tagsCount', 'listingsCount', 'categories', 'users', 'tags', 'cities', 'states', 'countries'));
 		} else {
 			return redirect()->route('index');
 		}

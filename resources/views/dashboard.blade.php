@@ -15,129 +15,141 @@
             z-index: 10;
         }
     }
-
-    .dataTables_paginate {
-        display: none;
-    }
 </style>
 @section('content')
-    <x-alert />
-    <div class="col-12">
-                <div class="card card-preview">
-                    <div class="card-inner">
-                        <div class="card-title-group align-start mb-2">
-                            <h4 class="">Noticse Board</h4>
-                            <div class="text-right">
-                                <div class="card-tools">
-                                    <ul class="card-tools-nav">
-                                        <li><a href="{{ route('notice.show') }}"><span>See All</span></a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 col-12 pb-md-0 pb-4">
-                                <div class="col-lg-12 p-0">
-                                    <div class="card border">
-                                        <div class="card-body p-0">
-                                            <h5 class="text-center pt-2">Pinned Notices</h5>
-                                            <div style="min-height: 90px; max-height:250px; overflow-x: hidden;"
-                                                class="news-and-upadtes scroll-thin">
-                                                <hr class="m-0" />
-                                                    <div class="card mt-1">
-                                                        <div class="card-inner p-2 pb-1">
-                                                            <a href="{{ route('notice.show') }}" class="text-dark">
-                                                                <div class="card-title-group align-start">
-                                                                    <div class="card-title">
-                                                                        <h5 class=""> 
-                                                                        </h5>
-                                                                        <h5 class="subtitle">Circular No:-
-                                                                            </h5>
-                                                                    </div>
-                                                                    <div class="text-right">
-                                                                        <div class="card-title mb-2">
-                                                                            <h5 class="subtitle">
-                                                                                
-                                                                                &nbsp;|&nbsp;&nbsp;
-                                                                            </h5>
-                                                                                <h5><em class="icon ni ni-lock-alt"></em>
-                                                                                </h5>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                        <hr class="m-0" />
-                                                    </div><!-- .card -->
-                                                    <div class="card card-bordered ">
-                                                        <div class="card-inner">
-                                                            <div class="p-3 text-center">No New Pinned Notice Available.
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                            </div> <!-- end slimscroll -->
-                                        </div>
-                                        <!-- end card-body -->
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                                <!-- end col -->
-                            </div>
-                            <div class="col-md-6 col-12">
-                                <div class="col-lg-12 p-0">
-                                    <div class="card border">
-                                        <div class="card-body p-0">
-                                            <h5 class="text-center pt-2">Notices</h5>
-                                            <div style="min-height: 80px; max-height:250px; overflow-x: hidden;"
-                                                class="news-and-upadtes scroll-thin">
-                                                <hr class="m-0" />
-                                                    <div class="card mt-1">
-                                                        <div class="card-inner p-3">
-                                                            <a href="{{ route('notice.show') }}" class="text-dark">
-                                                                <div class="card-title-group align-start">
-                                                                    <div class="card-title">
-                                                                        <h5 class=""> </h5>
-                                                                        <h5 class="subtitle">Circular No:-
-                                                                            </h5>
-                                                                    </div>
-                                                                    <div class="text-right">
-                                                                        <div class="card-title mb-2">
-                                                                            <h5 class="subtitle">
-                                                                                
-                                                                            </h5>
-                                                                                <h5><em class="icon ni ni-lock-alt"></em>
-                                                                                </h5>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </a>
-                                                        </div>
-                                                        <hr class="m-0" />
-                                                    </div><!-- .card -->
-                                                    <div class="card card-bordered ">
-                                                        <div class="card-inner">
-                                                            <div class="p-3 text-center">No New Notice Available.</div>
-                                                        </div>
-                                                    </div>
-                                            </div> <!-- end slimscroll -->
-                                        </div>
-                                        <!-- end card-body -->
-                                    </div>
-                                    <!-- end card-->
-                                </div>
-                                <!-- end col -->
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- .col -->
+<x-alert />
+<div class="card card-preview">
+    <div class="card-inner">
+        <div class="card-title-group align-start mb-2">
+            <h2 class="">Stats</h2>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <h4>Categories</h4>
+                <p>{{ $categoriesCount }}</p>
             </div>
+            <div class="col-md-4">
+                <h4>Tags</h4>
+                <p>{{ $tagsCount }}</p>
+            </div>
+            <div class="col-md-4">
+                <h4>Listings</h4>
+                <p>{{ $listingsCount }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-preview">
+    <div class="card-inner">
+        <div class="card-title-group align-start mb-2">
+            <h2 class="">Filter Listings</h2>
+        </div>
+        <form method="POST" action="{{ route('listings.filter')}}">
+            @csrf
+            <div class="modal-body-md">
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Listing Name</label>
+                        <input type="text" name="listing_name" id="listing_name" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Category</label>
+                        <select class="form-select js-select2 select2-hidden-accessible" id="category_id" name='category_id' data-search="on" tabindex="-1" aria-hidden="true">
+                            <option value="">Select Option</option>
+                            @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Tag</label>
+                        <select class="form-select js-select2 select2-hidden-accessible" id="tag_id" name='tag_id' data-search="on" tabindex="-1" aria-hidden="true">
+                            <option value="">Select Option</option>
+                            @foreach ($tags as $tag)
+                            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">User</label>
+                        <select class="form-select js-select2 select2-hidden-accessible" id="user_id" name='user_id' data-search="on" tabindex="-1" aria-hidden="true">
+                            <option value="">Select Option</option>
+                            @foreach ($users as $user)
+                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Full Address</label>
+                        <input type="text" name="full_address" id="full_address" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" id="city" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" name="start_date" id="start_date" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">End Date</label>
+                        <input type="date" name="end_date" id="end_date" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Query</label>
+                        <input type="text" name="query" id="query" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Type</label>
+                        <input type="text" name="type" id="type" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Postal Code</label>
+                        <input name="postal_code" type="text" pattern="\d*" minlength="5" maxlength="5" placeholder="54321" id="postal_code" class="form-control" />
+                    </div>
+                    <div class="col-md-3 mb-2">
+                    <label class="form-label">Country</label>
+                        <select class="form-select js-select2 select2-hidden-accessible" id="country" name='country' data-search="on" tabindex="-1" aria-hidden="true">
+                            <option value="">Select Option</option>
+                            @foreach ($countries as $country)
+                            <option value="{{ $country }}">{{ $country }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                    <label class="form-label">State</label>
+                        <select class="form-select js-select2 select2-hidden-accessible" id="state" name='state' data-search="on" tabindex="-1" aria-hidden="true">
+                            <option value="">Select Option</option>
+                            @foreach ($states as $state)
+                            <option value="{{ $state }}">{{ $state }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">City</label>
+                        <select class="form-select js-select2 select2-hidden-accessible" id="city" name='city' data-search="on" tabindex="-1" aria-hidden="true">
+                            <option value="">Select Option</option>
+                            @foreach ($cities as $city)
+                            <option value="{{ $city }}">{{ $city }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-2"> 
+                    <button type="submit" class="btn btn-info">Filter Listings</button>
+                    <button type="button" class="btn clear-filter btn-secondary">Clear</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection
 @push('custom-js')
-    <script>
-        $(document).ready(function() {
-            window.setTimeout(function() {
-                $(".alert-dismissible").fadeTo(3000, 0).slideUp(2000, function() {});
-            });
-        }, 5000);
-    </script>
+<script>
+    $(document).ready(function() {
+        window.setTimeout(function() {
+            $(".alert-dismissible").fadeTo(3000, 0).slideUp(2000, function() {});
+        });
+    }, 5000);
+</script>
 @endpush
