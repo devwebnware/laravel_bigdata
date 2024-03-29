@@ -23,10 +23,14 @@ class TagController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:categories,name|max:255',
+            'bg_color' => 'required',
+            'color' => 'required',
         ]);
 
         $tag = new Tag;
         $tag->name = $request->name;
+        $tag->bg_color = $request->bg_color;
+        $tag->color = $request->color;
         $tag->created_by = auth()->user()->id;
         $tag->save();
 
@@ -47,9 +51,13 @@ class TagController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:tags,name,' . $tag->id . '|max:255',
+            'bg_color' => 'required',
+            'color' => 'required',
         ]);
 
         $tag->name = $request->name;
+        $tag->bg_color = $request->bg_color;
+        $tag->color = $request->color;
         $tag->created_by = auth()->user()->id;
         $tag->update();
 

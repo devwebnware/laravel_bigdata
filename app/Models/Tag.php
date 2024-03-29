@@ -10,9 +10,12 @@ class Tag extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'bg_color',
+        'color',
     ];
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 }
+    
