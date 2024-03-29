@@ -23,21 +23,21 @@ class AddAdditionalFieldsToListingsTable extends Migration
             $table->text('us_state')->nullable();
             $table->text('country')->nullable();
             $table->text('country_code')->nullable();
-            $table->double('latitude')->nullable();
-            $table->double('longitude')->nullable();
+            $table->text('latitude')->nullable();
+            $table->text('longitude')->nullable();
             $table->text('time_zone')->nullable();
             $table->text('plus_code')->nullable();
             $table->text('area_service')->nullable();
-            $table->float('rating')->nullable();
-            $table->integer('reviews')->nullable();
+            $table->text('rating')->nullable();
+            $table->text('reviews')->nullable();
             $table->text('reviews_link')->nullable();
             $table->text('reviews_per_score')->nullable();
-            $table->integer('reviews_per_score_1')->nullable();
-            $table->integer('reviews_per_score_2')->nullable();
-            $table->integer('reviews_per_score_3')->nullable();
-            $table->integer('reviews_per_score_4')->nullable();
-            $table->integer('reviews_per_score_5')->nullable();
-            $table->integer('photos_count')->nullable();
+            $table->text('reviews_per_score_1')->nullable();
+            $table->text('reviews_per_score_2')->nullable();
+            $table->text('reviews_per_score_3')->nullable();
+            $table->text('reviews_per_score_4')->nullable();
+            $table->text('reviews_per_score_5')->nullable();
+            $table->text('photos_count')->nullable();
             $table->text('photo')->nullable();
             $table->text('street_view')->nullable();
             $table->text('located_in')->nullable();
@@ -51,7 +51,7 @@ class AddAdditionalFieldsToListingsTable extends Migration
             $table->text('posts')->nullable();
             $table->text('logo')->nullable();
             $table->text('description')->nullable();
-            $table->boolean('verified')->nullable();
+            $table->text('verified')->nullable();
             $table->text('owner_id')->nullable();
             $table->text('owner_title')->nullable();
             $table->text('owner_link', 255)->nullable();
@@ -95,8 +95,8 @@ class AddAdditionalFieldsToListingsTable extends Migration
             $table->text('website_generator')->nullable();
             $table->text('website_description')->nullable();
             $table->text('website_keywords')->nullable();
-            $table->boolean('website_has_fb_pixel')->nullable();
-            $table->boolean('website_has_google_tag')->nullable();
+            $table->text('website_has_fb_pixel')->nullable();
+            $table->text('website_has_google_tag')->nullable();
         });
     }
 

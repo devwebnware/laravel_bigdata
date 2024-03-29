@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('listings', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('category_id')->references('id')->on('categories')->default(1);
-            $table->foreignId('tag_id')->references('id')->on('tags')->default(1);;
-            $table->foreignId('created_by')->references('id')->on('users');
+            $table->foreignId('category_id')->default(1)->references('id')->on('categories');
+            $table->foreignId('tag_id')->default(1)->references('id')->on('tags');
+            $table->foreignId('created_by')->default(1)->references('id')->on('users');
             $table->timestamps();
         });
     }

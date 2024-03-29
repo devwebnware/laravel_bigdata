@@ -11,6 +11,7 @@ use App\Exports\ListingsExport;
 use App\Jobs\ImportDataJob;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ListingController extends Controller
@@ -146,8 +147,46 @@ class ListingController extends Controller
             $query->whereDate('created_at', '<=', $end);
         }
 
+        if ($request->filled('query')) {
+            $query->where('query', 'like', '%' . $request->query . '%');
+        }
+
+        if ($request->filled('type')) {
+            $query->where('type', 'like', '%' . $request->type . '%');
+        }
+
+        if ($request->filled('state')) {
+            $query->where('state', 'like', '%' . $request->state . '%');
+        }
+
+        if ($request->filled('city')) {
+            $query->where('city', 'like', '%' . $request->city . '%');
+        }
+
+        if ($request->filled('postal_code')) {
+            $query->where('postal_code', $request->postal_code);
+        }
+
+        if ($request->filled('country')) {
+            $query->where('country', 'like', '%' . $request->country . '%');
+        }
+
+        $search = $request->all();
+        Session::set('name', $request->name);
+        Session::set('category_id', $request->category_id);
+        Session::set('tag_id', $request->tag_id);
+        Session::set('user_id', $request->user_id);
+        Session::set('full_address', $request->full_address);
+        Session::set('city', $request->city);
+        Session::set('state', $request->state);
+        Session::set('query', $request->query);
+        Session::set('type', $request->type);
+        Session::set('postal_code', $request->postal_code);
+        Session::set('start_date', $request->start_date);
+        Session::set('end_date', $request->end_date);
+        Session::set('postel_code', $request->end_date);
         $listings = $query->paginate(10);
 
-        return view('backend.listings.filter', compact('listings', 'categories', 'tags', 'users', 'columnNames'));
+        return view('backend.listings.filter', compact('listings', 'categories', 'tags', 'users', 'columnNames', 'search'));
     }
 }
