@@ -44,7 +44,6 @@ Route::group(['middleware' => ['role:admin']], function () {
     // Flag View
     Route::get('flags/earned', [DashboardController::class, 'flagEarned'])->name('flag.earned');
     Route::post('user-config/update', [DashboardController::class, 'configUpdate'])->name('user.configUpdate');
-    Route::post('employee/profile', [EmployeeController::class, 'updateProfile'])->name('employee.updateProfile');
     Route::post('user/change/password', [DashboardController::class, 'changePassword'])->name('user.changePassword');
     Route::get('asset/assigned', [DashboardController::class, 'assignedAssets'])->name('assignedAssets');
     Route::post('asset/consumed', [DashboardController::class, 'markConsumed'])->name('markAssetConsumed');
@@ -72,7 +71,8 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::resource('listings', ListingController::class);
     Route::get('listings/data/export', [ListingController::class, 'export'])->name('listings.data.export');
     Route::get('listings/data/import', [ListingController::class, 'import'])->name('listings.data.import');
-    Route::post('listings/data/filter', [ListingController::class, 'filter'])->name('listings.filter');
+    Route::post('listings/filter', [ListingController::class, 'filter'])->name('listings.filter');
+    Route::post('listings/filter/export', [ListingController::class, 'exportFilter'])->name('listings.export.filtered');
     Route::post('listings/data/handel/import', [ListingController::class, 'handelImport'])->name('listings.data.handel.import');
 });
 

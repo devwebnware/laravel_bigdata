@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tag;
+use App\Models\User;
 use App\Models\Listing;
 use App\Models\Category;
-use App\Models\User;
+use App\Helpers\GeneralHelper;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -17,16 +18,10 @@ class DashboardController extends Controller
 			$tagsCount = Tag::count();
 			$listings = Listing::all();
 			
-			$cities = $listings->pluck('city')->filter()->unique();
-			$states = $listings->pluck('state')->filter()->unique();
-			$countries = $listings->pluck('country')->filter()->unique();			
-			$categories = Category::select('id', 'name')->get();
-			$tags = Tag::select('id', 'name')->get();
-			$users = User::select('id', 'name')->get();
-			
+			$dropdownData = GeneralHelper::getDropdowns();
 			$listingsCount = $listings->count();
 			
-			return view('dashboard', compact('categoriesCount', 'tagsCount', 'listingsCount', 'categories', 'users', 'tags', 'cities', 'states', 'countries'));
+			return view('dashboard', compact('categoriesCount', 'tagsCount', 'listingsCount', 'dropdownData'));
 		} else {
 			return redirect()->route('index');
 		}
