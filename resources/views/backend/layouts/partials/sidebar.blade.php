@@ -24,6 +24,11 @@
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
+                        <a href="{{ route('field.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-property-add"></em></span>
+                            <span class="nk-menu-text">Custom Field</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item has-sub">
                         <a href="{{ route('tags.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-tag-alt"></em></span>
                             <span class="nk-menu-text">Tag</span>
                         </a>

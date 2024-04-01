@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\FieldController;
 
 require __DIR__ . '/auth.php';
 
@@ -76,6 +77,12 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::post('listings/filter/export', [ListingController::class, 'exportFilter'])->name('listings.export.filtered');
     Route::post('listings/data/handel/import', [ListingController::class, 'handelImport'])->name('listings.data.handel.import');
     Route::get('user/import/export/logs', [ListingController::class, 'importExportLogs'])->name('user.import.export.logs');
+
+    Route::controller(FieldController::class)->name('field.')->group(function() {
+        Route::get('fields', 'index')->name('index');
+        Route::get('field/create', 'create')->name('create');
+        Route::post('fields/store', 'store')->name('store');
+    });
 });
 
 
