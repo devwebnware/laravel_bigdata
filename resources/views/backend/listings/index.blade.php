@@ -133,6 +133,8 @@
         <thead>
             <tr class="tb-tnx-head">
                 <th class="w-50 tb-tnx-info">#</th>
+                <th class="w-50 tb-tnx-info">Action</th>
+                <th class="w-50 tb-tnx-info">Tags</th>
                 @foreach($columnNames as $column)
                 @if($column !== 'id' && $column !== 'created_by' && $column !== 'created_at' && $column !== 'updated_at')
                 <th class="tb-tnx-info">{{ $column }}</th>
@@ -147,18 +149,28 @@
             @forelse($listings as $key => $listing)
             <tr>
                 <td class="w-50">{{ substr($serialNumber++,0, 20) }}</td>
-                <!-- <td>{{ substr($listing->id,0, 20) }}</td> -->
+                <td>
+                    <div class="drodown">
+                        <a href="javascript:void(0)" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <ul class="link-list-opt">
+                                <li><a href="{{ route('listings.edit', ['listing' => $listing->id]) }}"><em style="font-size: 20px;" class="icon ni ni-edit"></em>Edit</a></li>
+                                <li><a href="#" onclick="deleteRequest('{{$listing->name}}','{{$listing->id}}')"><em style="font-size: 20px; color: red;" class="icon ni ni-trash"></em></em>Delete</a></li>
+                                <li><a href="{{ route('listings.show', ['listing' => $listing->id]) }}"><em style="font-size: 20px; color: red;" class="icon ni ni-trash"></em></em>Show</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    @foreach($listing->listingTags as $tag)
+                    <span class="badge rounded-pill" style="background-color: {{ $tag->tagName->bg_color ?? 'default_color' }}; color: {{ $tag->tagName->color ?? 'color' }} ">
+                        {{ substr($tag->tagName->name, 0, 20) }}
+                    </span>
+                    @endforeach
+                </td>
                 <td>{{ substr($listing->name,0, 20) }}</td>
                 <td>{{ substr($listing->category->name,0, 20) }}</td>
-                <td>
-                    <span class="badge rounded-pill" style="background-color: {{ $listing->tag->bg_color ?? 'default_color' }}; color: {{ $listing->tag->color ?? 'color' }} ">
-                        {{ substr($listing->tag->name, 0, 20) }}
-                    </span>
-                </td>
                 {{-- <td>{{ substr($listing->tag->name,0, 20) }}</td> --}}
-                <!-- <td>{{ substr($listing->user->name,0, 20) }}</td> -->
-                <!-- <td>{{ substr($listing->created_at,0, 20) }}</td> -->
-                <!-- <td>{{ substr($listing->updated_at,0, 20) }}</td> -->
                 <td>{{ substr($listing->query,0, 20) }}</td>
                 <td>{{ substr($listing->site,0, 20) }}</td>
                 <td>{{ substr($listing->type,0, 20) }}</td>
@@ -257,10 +269,6 @@
                 <td>{{ substr($listing->website_keywords,0, 20) }}</td>
                 <td>{{ substr($listing->website_has_fb_pixel,0, 20) }}</td>
                 <td>{{ substr($listing->website_has_google_tag,0, 20) }}</td>
-                <td class="nk-tb-col text-center nk-tb-col-tools">
-                    <a href="{{ route('listings.edit', ['listing' => $listing->id]) }}"><em style="font-size: 20px;" class="icon ni ni-edit"></em></a>
-                    <a class="ml-2" href="#" onclick="deleteRequest('{{$listing->name}}','{{$listing->id}}')"><em style="font-size: 20px; color: red;" class="icon ni ni-trash"></em></em></a>
-                </td>
             </tr>
             @empty
             <tr class="text-center">
