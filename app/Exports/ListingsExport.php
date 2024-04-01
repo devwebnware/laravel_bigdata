@@ -2,13 +2,19 @@
 
 namespace App\Exports;
 
-use App\Models\Listing;
 use Maatwebsite\Excel\Concerns\FromCollection;
 
 class ListingsExport implements FromCollection
 {
+    protected $listings;
+
+    public function __construct($listings)
+    {
+        $this->listings = $listings;
+    }
+
     public function collection()
     {
-        return Listing::all();
+        return $this->listings;
     }
 }
