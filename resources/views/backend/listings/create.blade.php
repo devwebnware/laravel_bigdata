@@ -24,11 +24,11 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="form-group"><label class="form-label" for="tag_id">Tag</label>
-                        <select class="form-select js-select2 select2-hidden-accessible" id="tag_id" name='tag_id' data-search="on" data-select2-id="7" tabindex="-1" aria-hidden="true">
-                            <option value="default_option">Default Option</option>
-                            @foreach ($tags as $tag)
-                            <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                    <div class="form-group"><label class="form-label" for="tag_id">Tags</label>
+                        <select class="form-select" multiple="multiple" id="tags" data-placeholder="Select Tags" name="tags[]">
+                            <option value="">Select Tags</option>
+                            @foreach($tags as $tag)
+                            <option value="{{$tag->id}}">{{ucwords($tag->name)}} </option>
                             @endforeach
                         </select>
                     </div>
