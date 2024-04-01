@@ -29,9 +29,16 @@
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
-                        <a href="{{ route('listings.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-view-list-fill"></em></span>
-                            <span class="nk-menu-text">Listing</span>
+                        <a href="{{ route('user.import.export.logs') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-view-list-fill"></em></span>
+                            <span class="nk-menu-text">Logs</span>
                         </a>
+                    </li>
+                    <li class="nk-menu-item has-sub active current-page"><a href="#" class="nk-menu-link nk-menu-toggle"><span class="nk-menu-icon"><em class="icon ni ni-list-thumb-alt"></em></span><span class="nk-menu-text">Listing</span></a>
+                        <ul class="nk-menu-sub">
+                            <li class="nk-menu-item"><a href="{{ route('listings.index') }}" class="nk-menu-link"><span class="nk-menu-text">View Listings</span></a></li>
+                            <li class="nk-menu-item active current-page"><a href="{{ route('listings.data.import') }}" class="nk-menu-link"><span class="nk-menu-text">Import</span></a></li>
+                            <li class="nk-menu-item active current-page"><a href="{{ route('listings.data.export') }}" class="nk-menu-link"><span class="nk-menu-text">Export</span></a></li>
+                        </ul>
                     </li>
                     @endcan
             </div>
