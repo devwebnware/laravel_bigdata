@@ -2,30 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Tag;
-use App\Models\Listing;
-use App\Models\User;
-use App\Models\Category;
-use Illuminate\Http\Request;
-use App\Exports\ListingsExport;
-use App\Jobs\ImportDataJob;
 use Carbon\Carbon;
+use App\Models\Tag;
+use App\Models\User;
+use App\Models\Listing;
+use App\Models\Category;
+use App\Jobs\ImportDataJob;
+use Illuminate\Http\Request;
+use App\Helpers\GeneralHelper;
+use App\Exports\ListingsExport;
+use App\Imports\ListingsImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
-use Maatwebsite\Excel\Facades\Excel;
+
 
 class ListingController extends Controller
 {
     protected $_action;
+
     public function index()
     {
         $tableName = 'listings';
         $columnNames = Schema::getColumnListing($tableName);
-        $categories = Category::select('id', 'name')->get();
-        $tags = Tag::select('id', 'name')->get();
-        $users = User::select('id', 'name')->get();
+        $dropdownData = GeneralHelper::getDropdowns();
         $listings = Listing::paginate(10);
-        return view('backend.listings.index', compact('listings', 'categories', 'tags', 'users', 'columnNames'));
+        return view('backend.listings.index', compact('listings', 'dropdownData', 'columnNames'));
     }
 
     public function create()
@@ -70,6 +72,8 @@ class ListingController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:tags,name,' . $listing->id . '|max:255',
+            'category_id' => 'required',
+            'tag_id' => 'required',
         ]);
 
         $listing->name = $request->name;
@@ -90,7 +94,8 @@ class ListingController extends Controller
 
     public function export()
     {
-        return Excel::download(new ListingsExport, 'listings.csv');
+        $listings = Listing::all();
+        return Excel::download(new ListingsExport($listings), 'listings.csv');
     }
 
     public function import()
@@ -100,7 +105,15 @@ class ListingController extends Controller
 
     public function handelImport(Request $request)
     {
-        Excel::queueImport(new ImportDataJob, $request->file('data'));
+        try {
+            $import = new ListingsImport();
+            Excel::import($import, $request->file('data'));
+            $validRows = $import->getValidRows();
+            ImportDataJob::dispatch($validRows);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
         return response()->json(['message' => 'Import job queued']);
     }
 
@@ -109,84 +122,70 @@ class ListingController extends Controller
         $tableName = 'listings';
         $columnNames = Schema::getColumnListing($tableName);
         $query = Listing::query();
+        $dropdownData = GeneralHelper::getDropdowns();
+        $query = $this->applyFilters($query, $request->except('_token'));
+
+        $listings = $query->paginate(10);
+        $request->session()->put('filter', $request->except('_token'));
+
+        return view('backend.listings.index', compact('listings', 'dropdownData', 'columnNames'));
+    }
+
+    public function exportFilter()
+    {
+        $filter = Session::get('filter');
+        $query = Listing::query();
+        $query = $this->applyFilters($query, $filter);
+        $listings = $query->get();
+        return Excel::download(new ListingsExport($listings), 'listings.csv');
+    }
+
+    private function FilterDropdowns()
+    {
         $categories = Category::select('id', 'name')->get();
         $tags = Tag::select('id', 'name')->get();
         $users = User::select('id', 'name')->get();
+        return [
+            'categories' => $categories,
+            'tags' => $tags,
+            'users' => $users
+        ];
+    }
 
-        if ($request->filled('listing_name')) {
-            $query->where('name', 'like', '%' . $request->listing_name . '%');
+    private function applyFilters($query, $filters)
+    {
+        foreach ($filters as $key => $value) {
+            if ($value && $key !== '_token') {
+                switch ($key) {
+                    case 'name':
+                    case 'full_address':
+                    case 'city':
+                    case 'query':
+                    case 'type':
+                    case 'state':
+                    case 'country':
+                        $query->where($key, 'like', '%' . $value . '%');
+                        break;
+                    case 'category_id':
+                    case 'tag_id':
+                    case 'user_id':
+                    case 'postal_code':
+                        $query->where($key, $value);
+                        break;
+                    case 'start_date':
+                        $start = Carbon::parse($value);
+                        $query->whereDate('created_at', '>=', $start);
+                        break;
+                    case 'end_date':
+                        $end = Carbon::parse($value);
+                        $query->whereDate('created_at', '<=', $end);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
-        if ($request->filled('full_address')) {
-            $query->where('full_address', 'like', '%' . $request->full_address . '%');
-        }
-
-        if ($request->filled('city')) {
-            $query->where('city', 'like', '%' . $request->city . '%');
-        }
-
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
-
-        if ($request->filled('tag_id')) {
-            $query->where('tag_id', $request->tag_id);
-        }
-
-        if ($request->filled('user_id')) {
-            $query->where('created_by', $request->user_id);
-        }
-
-        if ($request->filled('start_date')) {
-            $start = Carbon::parse($request->start_date);
-            $query->whereDate('created_at', '>=', $start);
-        }
-
-        if ($request->filled('end_date')) {
-            $end = Carbon::parse($request->end_date);
-            $query->whereDate('created_at', '<=', $end);
-        }
-
-        if ($request->filled('query')) {
-            $query->where('query', 'like', '%' . $request->query . '%');
-        }
-
-        if ($request->filled('type')) {
-            $query->where('type', 'like', '%' . $request->type . '%');
-        }
-
-        if ($request->filled('state')) {
-            $query->where('state', 'like', '%' . $request->state . '%');
-        }
-
-        if ($request->filled('city')) {
-            $query->where('city', 'like', '%' . $request->city . '%');
-        }
-
-        if ($request->filled('postal_code')) {
-            $query->where('postal_code', $request->postal_code);
-        }
-
-        if ($request->filled('country')) {
-            $query->where('country', 'like', '%' . $request->country . '%');
-        }
-
-        $search = $request->all();
-        Session::set('name', $request->name);
-        Session::set('category_id', $request->category_id);
-        Session::set('tag_id', $request->tag_id);
-        Session::set('user_id', $request->user_id);
-        Session::set('full_address', $request->full_address);
-        Session::set('city', $request->city);
-        Session::set('state', $request->state);
-        Session::set('query', $request->query);
-        Session::set('type', $request->type);
-        Session::set('postal_code', $request->postal_code);
-        Session::set('start_date', $request->start_date);
-        Session::set('end_date', $request->end_date);
-        Session::set('postel_code', $request->end_date);
-        $listings = $query->paginate(10);
-
-        return view('backend.listings.filter', compact('listings', 'categories', 'tags', 'users', 'columnNames', 'search'));
+        return $query;
     }
 }

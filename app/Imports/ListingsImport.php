@@ -2,21 +2,49 @@
 
 namespace App\Imports;
 
-use App\Models\Listing;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Validator;
 
-class ListingsImport implements ToModel
+class ListingsImport implements ToCollection
 {
-    public function model(array $row)
+    protected $validRows = [];
+
+    public function collection(Collection $rows)
     {
-        return new Listing([
-            'id' => $row[0], 
-            'name' => $row[1],
-            'category_id' => $row[2],
-            'tag_id' => $row[3],
-            'created_by' => $row[4],
-            'created_at' => $row[5],
-            'updated_at' => $row[6],
-        ]);
+        $errors = [];
+        $lineNumber = 0;
+
+        foreach ($rows as $row) {
+            $lineNumber++;
+
+            $validator = Validator::make([
+                'column1' => $row[0],
+                'column2' => $row[1],
+            ], [
+                'column1' => 'required',
+                'column2' => 'required',
+            ]);
+
+            if ($validator->fails()) {
+                $errors[] = "Line $lineNumber: " . implode(', ', $validator->errors()->all());
+            } else {
+                // Store the valid row
+                $this->validRows[] = [
+                    'column1' => $row[0],
+                    'column2' => $row[1],
+                ];
+            }
+        }
+
+        if (!empty($errors)) {
+            // Throw an exception with errors
+            throw new \Exception(implode(PHP_EOL, $errors));
+        }
+    }
+
+    public function getValidRows()
+    {
+        return $this->validRows;
     }
 }
