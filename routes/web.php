@@ -70,10 +70,12 @@ Route::group(['middleware' => ['role:admin']], function () {
     // Listing CRUD
     Route::resource('listings', ListingController::class);
     Route::get('listings/data/export', [ListingController::class, 'export'])->name('listings.data.export');
+    Route::post('listings/data/handel/export', [ListingController::class, 'handelExport'])->name('listings.data.handel.export');
     Route::get('listings/data/import', [ListingController::class, 'import'])->name('listings.data.import');
     Route::post('listings/filter', [ListingController::class, 'filter'])->name('listings.filter');
     Route::post('listings/filter/export', [ListingController::class, 'exportFilter'])->name('listings.export.filtered');
     Route::post('listings/data/handel/import', [ListingController::class, 'handelImport'])->name('listings.data.handel.import');
+    Route::get('user/import/export/logs', [ListingController::class, 'importExportLogs'])->name('user.import.export.logs');
 });
 
 

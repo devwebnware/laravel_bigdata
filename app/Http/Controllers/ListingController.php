@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Tag;
 use App\Models\User;
+use App\Models\ExportImportLog;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Jobs\ImportDataJob;
@@ -94,7 +95,17 @@ class ListingController extends Controller
 
     public function export()
     {
+        $dropdownData = GeneralHelper::getDropdowns();
+        return view('backend.listings.export', compact('dropdownData'));
+    }
+
+    public function handelExport()
+    {
         $listings = Listing::all();
+        $log = new ExportImportLog();
+        $log->user_id = auth()->user()->id;
+        $log->type = 1;
+        $log->save();
         return Excel::download(new ListingsExport($listings), 'listings.csv');
     }
 
@@ -110,6 +121,10 @@ class ListingController extends Controller
             Excel::import($import, $request->file('data'));
             $validRows = $import->getValidRows();
             ImportDataJob::dispatch($validRows);
+            $log = new ExportImportLog();
+            $log->user_id = auth()->user()->id;
+            $log->type = 0;
+            $log->save();
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -137,19 +152,13 @@ class ListingController extends Controller
         $query = Listing::query();
         $query = $this->applyFilters($query, $filter);
         $listings = $query->get();
-        return Excel::download(new ListingsExport($listings), 'listings.csv');
-    }
 
-    private function FilterDropdowns()
-    {
-        $categories = Category::select('id', 'name')->get();
-        $tags = Tag::select('id', 'name')->get();
-        $users = User::select('id', 'name')->get();
-        return [
-            'categories' => $categories,
-            'tags' => $tags,
-            'users' => $users
-        ];
+        $log = new ExportImportLog();
+        $log->user_id = auth()->user()->id;
+        $log->type = 1;
+        $log->save();
+
+        return Excel::download(new ListingsExport($listings), 'listings.csv');
     }
 
     private function applyFilters($query, $filters)
@@ -187,5 +196,11 @@ class ListingController extends Controller
         }
 
         return $query;
+    }
+
+    public function importExportLogs()
+    {
+        $logs = ExportImportLog::all();
+        return view('backend.log.index', compact('logs'));
     }
 }
