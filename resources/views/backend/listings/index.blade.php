@@ -4,19 +4,25 @@
 @section('content')
 <x-alert />
 <div class="d-flex flex-row">
+    @if(Route::currentRouteName() == 'listings.index')
     <a href="{{ route('listings.data.import')}}" class='btn btn-secondary mr-2'>Import</a>
     <a href="{{ route('listings.data.export')}}" class='btn btn-secondary mr-2'>Export</a>
+    <a href="{{ route('listings.create')}}" class='btn btn-info mr-auto text-decoration-none'>Add Listing</a>
+    @endif
+    @if(Route::currentRouteName() == 'listings.filter')
+    <form action="{{ route('listings.export.filtered') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn mr-2 btn-primary">Export Filtered Data</button>
+    </form>
+    @endif
     <!-- Filter Modal trigger button -->
     <button data-toggle="modal" class="btn btn-info" data-target="#filterModal"><em class="icon ni ni-filter"></em><span>Filter Records</span></button>
-    <div class="ml-auto">
-        <a href="{{ route('listings.create')}}" class='btn btn-info mr-auto text-decoration-none'>Add Listing</a>
-    </div>
 </div>
 <!-- Start Filter Modal -->
 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="markPaid" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
-            <form method="POST" action="{{ route('listings.filter')}}">
+            <form method="POST" action="{{ route('listings.filter')}}" id="filterForm">
                 @csrf
                 <a href="#" class="close" data-dismiss="modal" aria-label="Close">
                     <em class="icon ni ni-cross"></em>
@@ -28,13 +34,13 @@
                     <div class="row">
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Listing Name</label>
-                            <input type="text" name="listing_name" id="listing_name" class="form-control" />
+                            <input type="text" name="name" id="name" class="form-control" />
                         </div>
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Category</label>
                             <select class="form-select js-select2 select2-hidden-accessible" id="category_id" name='category_id' data-search="on" tabindex="-1" aria-hidden="true">
                                 <option value="">Select Option</option>
-                                @foreach ($categories as $category)
+                                @foreach ($dropdownData['categories'] as $category)
                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
@@ -42,17 +48,17 @@
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Tag</label>
                             <select class="form-select js-select2 select2-hidden-accessible" id="tag_id" name='tag_id' data-search="on" tabindex="-1" aria-hidden="true">
-                                <option value="">Select Option</option>
-                                @foreach ($tags as $tag)
+                                <option value="" selected disabled>Select Tag</option>
+                                @foreach ($dropdownData['tags'] as $tag)
                                 <option value="{{ $tag->id }}">{{ $tag->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3 mb-2">
                             <label class="form-label">User</label>
-                            <select class="form-select js-select2 select2-hidden-accessible" id="user_id" name='user_id' data-search="on" tabindex="-1" aria-hidden="true">
+                            <select class="form-select js-select2 select2-hidden-accessible" id="created_by" name='created_by' data-search="on" tabindex="-1" aria-hidden="true">
                                 <option value="">Select Option</option>
-                                @foreach ($users as $user)
+                                @foreach ($dropdownData['users'] as $user)
                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
                             </select>
@@ -60,10 +66,6 @@
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Full Address</label>
                             <input type="text" name="full_address" id="full_address" class="form-control" />
-                        </div>
-                        <div class="col-md-3 mb-2">
-                            <label class="form-label">City</label>
-                            <input type="text" name="city" id="city" class="form-control" />
                         </div>
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Start Date</label>
@@ -86,12 +88,31 @@
                             <input name="postal_code" type="text" pattern="\d*" minlength="5" maxlength="5" placeholder="54321" id="postal_code" class="form-control" />
                         </div>
                         <div class="col-md-3 mb-2">
-                            <label class="form-label">US State</label>
-                            <input type="text" name="us_state" id="us_state" class="form-control" />
+                            <label class="form-label">Country</label>
+                            <select class="form-select js-select2 select2-hidden-accessible" id="country" name='country' data-search="on" tabindex="-1" aria-hidden="true">
+                                <option value="">Select Option</option>
+                                @foreach ($dropdownData['countries'] as $country)
+                                <option value="{{ $country }}">{{ $country }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-md-3 mb-2">
-                            <label class="form-label">Country</label>
-                            <input type="text" name="country" id="country" class="form-control" />
+                            <label class="form-label">State</label>
+                            <select class="form-select js-select2 select2-hidden-accessible" id="state" name='state' data-search="on" tabindex="-1" aria-hidden="true">
+                                <option value="">Select Option</option>
+                                @foreach ($dropdownData['states'] as $state)
+                                <option value="{{ $state }}">{{ $state }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">City</label>
+                            <select class="form-select js-select2 select2-hidden-accessible" id="city" name='city' data-search="on" tabindex="-1" aria-hidden="true">
+                                <option value="">Select Option</option>
+                                @foreach ($dropdownData['cities'] as $city)
+                                <option value="{{ $city }}">{{ $city }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -109,7 +130,7 @@
 
 <div class="card card-bordered table-responsive mt-3 card-preview">
     <table class="table table-tranx w-auto">
-        <thead> 
+        <thead>
             <tr class="tb-tnx-head">
                 <th class="w-50 tb-tnx-info">#</th>
                 @foreach($columnNames as $column)
@@ -134,7 +155,7 @@
                         {{ substr($listing->tag->name, 0, 20) }}
                     </span>
                 </td>
-                <td>{{ substr($listing->tag->name,0, 20) }}</td>
+                {{-- <td>{{ substr($listing->tag->name,0, 20) }}</td> --}}
                 <!-- <td>{{ substr($listing->user->name,0, 20) }}</td> -->
                 <!-- <td>{{ substr($listing->created_at,0, 20) }}</td> -->
                 <!-- <td>{{ substr($listing->updated_at,0, 20) }}</td> -->
@@ -270,6 +291,23 @@
     // Clear filter
     $('.clear-filter').click(function() {
         $('.form-control, .form-select').val('').trigger('change');
+    });
+
+    document.getElementById('filterForm').addEventListener('submit', function(event) {
+        var inputs = this.getElementsByTagName('input');
+        var isAnyFieldFilled = false;
+
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].value.trim() !== '') {
+                isAnyFieldFilled = true;
+                break;
+            }
+        }
+
+        if (!isAnyFieldFilled) {
+            alert('Please fill at least one input field');
+            event.preventDefault(); // Prevent form submission
+        }
     });
 </script>
 @endpush
