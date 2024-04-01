@@ -125,6 +125,7 @@ class ListingController extends Controller
 
     public function handelImport(Request $request)
     {
+        // Start: CSV file data validation before database operations
         try {
             $import = new ListingsImport();
             Excel::import($import, $request->file('data'));
@@ -136,9 +137,8 @@ class ListingController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
-        Excel::queueImport(new ImportDataJob, $request->file('data'));
-        return response()->json(['message' => 'Import job queued']);
-
+        // End
+        Excel::queueImport(new ImportDataJob, $request->file('data')); // CSV data import job
         return response()->json(['message' => 'Import job queued']);
     }
 
