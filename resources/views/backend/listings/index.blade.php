@@ -155,8 +155,8 @@
                         <div class="dropdown-menu dropdown-menu-right">
                             <ul class="link-list-opt">
                                 <li><a href="{{ route('listings.edit', ['listing' => $listing->id]) }}"><em style="font-size: 20px;" class="icon ni ni-edit"></em>Edit</a></li>
-                                <li><a href="#" onclick="deleteRequest('{{$listing->name}}','{{$listing->id}}')"><em style="font-size: 20px; color: red;" class="icon ni ni-trash"></em></em>Delete</a></li>
-                                <li><a href="{{ route('listings.show', ['listing' => $listing->id]) }}"><em style="font-size: 20px; color: red;" class="icon ni ni-trash"></em></em>Show</a></li>
+                                <li><a href="#" onclick="deleteRequest('{{$listing->name}}','{{$listing->id}}')"><em class="icon ni ni-trash"></em>Delete</a></li>
+                                <li><a href="{{ route('listings.show', ['listing' => $listing->id]) }}"><em class="icon ni ni-eye"></em>Show</a></li>
                             </ul>
                         </div>
                     </div>
