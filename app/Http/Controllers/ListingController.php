@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\Helpers\GeneralHelper;
 use App\Exports\ListingsExport;
 use App\Imports\ListingsImport;
+use App\Models\ListingTag;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -26,9 +27,10 @@ class ListingController extends Controller
     {
         $tableName = 'listings';
         $columnNames = Schema::getColumnListing($tableName);
+        $tags = ListingTag::all();
         $dropdownData = GeneralHelper::getDropdowns();
         $listings = Listing::paginate(10);
-        return view('backend.listings.index', compact('listings', 'dropdownData', 'columnNames'));
+        return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'columnNames'));
     }
 
     public function create()
@@ -74,14 +76,21 @@ class ListingController extends Controller
         $request->validate([
             'name' => 'required|unique:tags,name,' . $listing->id . '|max:255',
             'category_id' => 'required',
-            'tag_id' => 'required',
+            'tags' => 'required',
         ]);
 
         $listing->name = $request->name;
         $listing->category_id = $request->category_id;
-        $listing->tag_id = $request->tag_id;
         $listing->created_by = auth()->user()->id;
         $listing->update();
+        if($request->tags) {
+            foreach ($request->tags as $tag) {
+                $listingTag = new ListingTag();
+                $listingTag->listing_id = $listing->id;
+                $listingTag->tag_id = $tag;
+                $listingTag->save();
+            }
+        }
 
         return redirect()->route('listings.index')->with('success', 'Listing updated successfully.');
     }
@@ -120,7 +129,6 @@ class ListingController extends Controller
             $import = new ListingsImport();
             Excel::import($import, $request->file('data'));
             $validRows = $import->getValidRows();
-            ImportDataJob::dispatch($validRows);
             $log = new ExportImportLog();
             $log->user_id = auth()->user()->id;
             $log->type = 0;
@@ -128,6 +136,8 @@ class ListingController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
+        Excel::queueImport(new ImportDataJob, $request->file('data'));
+        return response()->json(['message' => 'Import job queued']);
 
         return response()->json(['message' => 'Import job queued']);
     }

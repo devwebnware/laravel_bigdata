@@ -9,6 +9,7 @@ class Listing extends Model
 {
     use HasFactory;
 
+    protected $table = 'listings';
     protected $fillable = [
         'name',
         'category_id',
@@ -109,9 +110,9 @@ class Listing extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function tag()
+    public function listingTags()
     {
-        return $this->belongsTo(Tag::class);
+        return $this->hasMany(ListingTag::class, 'listing_id', 'id');
     }
 
     public function user()
