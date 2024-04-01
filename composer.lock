@@ -42,7 +42,10 @@
             "autoload": {
                 "psr-4": {
                     "Anhskohbo\\NoCaptcha\\": "src/"
-                }
+                },
+                "files": [
+                    "app/Helpers/GeneralHelper.php"
+                ]
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
