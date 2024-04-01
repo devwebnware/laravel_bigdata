@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Tag;
-use App\Models\User;
-use App\Models\ExportImportLog;
 use App\Models\Listing;
 use App\Models\Category;
+use App\Models\ListingTag;
 use App\Jobs\ImportDataJob;
 use Illuminate\Http\Request;
 use App\Helpers\GeneralHelper;
+use App\Models\ExportImportLog;
 use App\Exports\ListingsExport;
 use App\Imports\ListingsImport;
-use App\Models\ListingTag;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -171,6 +170,7 @@ class ListingController extends Controller
         return Excel::download(new ListingsExport($listings), 'listings.csv');
     }
 
+    // Common function for "exportFilter", and "filter" functions
     private function applyFilters($query, $filters)
     {
         foreach ($filters as $key => $value) {
@@ -208,6 +208,7 @@ class ListingController extends Controller
         return $query;
     }
 
+    // Display import export logs
     public function importExportLogs()
     {
         $logs = ExportImportLog::all();
