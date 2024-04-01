@@ -16,20 +16,21 @@
                 <div class="mb-3 col-md-6">
                     <label for="category" style="margin-bottom: 10px;" class="form-label">Category</label>
                     <select class="form-select" name="category_id" id="category" aria-label="Default select example">
-                        <option selected>Open this select menu</option>
+                        <option value='' selected>Open this select menu</option>
                         @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" @if ($listing->tag_id==$category->id) selected @endif>{{ $category->name}} </option>
+                        <option value="{{ $category->id }}" @if ($listing->category_id==$category->id) selected @endif>{{ $category->name}} </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="mb-3 col-md-6" style="margin-bottom: 10px;">
-                    <label for="tag" style="margin-bottom: 10px;" class="form-label">Tag</label>
-                    <select class="form-select" name="tag_id" id="tag" aria-label="Default select example">
-                        <option selected>Open this select menu</option>
-                        @foreach($tags as $tag)
-                        <option value="{{ $tag->id }}" @if ($listing->tag_id==$tag->id) selected @endif>{{ $tag->name}} </option>
-                        @endforeach
-                    </select>
+                    <div class="form-group"><label class="form-label" for="tag_id">Tags</label>
+                        <select class="form-select" multiple="multiple" id="tags" data-placeholder="Select Tags" name="tags[]">
+                            <option value="">Select Tags</option>
+                            @foreach($tags as $tag)
+                            <option value="{{$tag->id}}">{{ucwords($tag->name)}} </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Update</button>

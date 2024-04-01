@@ -16,7 +16,7 @@
                 <div class="col-lg-6">
                     <div class="form-group"><label class="form-label" for="category_id">Category</label>
                         <select class="form-select js-select2 select2-hidden-accessible" id="category_id" name='category_id' data-search="on" data-select2-id="6" tabindex="-1" aria-hidden="true">
-                            <option value="default_option">Default Option</option>
+                            <option value="">Default Option</option>
                             @foreach ($categories as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
                             @endforeach
