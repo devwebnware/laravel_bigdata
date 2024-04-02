@@ -34,7 +34,7 @@
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
-                        <a href="{{ route('user.import.export.logs') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-view-list-fill"></em></span>
+                        <a href="{{ route('listings.user.import.export.logs') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-view-list-fill"></em></span>
                             <span class="nk-menu-text">Logs</span>
                         </a>
                     </li>

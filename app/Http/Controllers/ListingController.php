@@ -82,7 +82,7 @@ class ListingController extends Controller
         $listing->category_id = $request->category_id;
         $listing->created_by = auth()->user()->id;
         $listing->update();
-        if($request->tags) {
+        if ($request->tags) {
             foreach ($request->tags as $tag) {
                 $listingTag = new ListingTag();
                 $listingTag->listing_id = $listing->id;
@@ -124,21 +124,29 @@ class ListingController extends Controller
 
     public function handelImport(Request $request)
     {
-        // Start: CSV file data validation before database operations
-        try {
-            $import = new ListingsImport();
-            Excel::import($import, $request->file('data'));
-            $validRows = $import->getValidRows();
-            $log = new ExportImportLog();
-            $log->user_id = auth()->user()->id;
-            $log->type = 0;
-            $log->save();
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+        if ($request->filled('headers')) {
+            // dd($request['headers']);
+            // Start: CSV file data validation before database operations
+            // try {
+            //     $import = new ListingsImport($request['headers']);
+            //     Excel::import($import, $request->file('data'));
+            //     $log = new ExportImportLog();
+            //     $log->user_id = auth()->user()->id;
+            //     $log->type = 0;
+            //     $log->save();
+            // } catch (\Exception $e) {
+            //     return back()->with('error', $e->getMessage());
+            // }
+            // End
+            $import = new ImportDataJob($request['headers']);
+            Excel::queueImport($import, $request->file('data')); // CSV data import job
+            return response()->json(['message' => 'Import job queued']);
+        } else {
+            $tableName = 'listings';
+            $columnNames = Schema::getColumnListing($tableName);
+            $headers = Excel::toArray([], $request->file('data'))[0][0];
+            return response()->json(['headers' => $headers, 'columnNames' => $columnNames]);
         }
-        // End
-        Excel::queueImport(new ImportDataJob, $request->file('data')); // CSV data import job
-        return response()->json(['message' => 'Import job queued']);
     }
 
     public function filter(Request $request)
@@ -213,5 +221,17 @@ class ListingController extends Controller
     {
         $logs = ExportImportLog::all();
         return view('backend.log.index', compact('logs'));
+    }
+
+    public function getHeaders(Request $request)
+    {
+        try {
+            // Read the first row (headers) from the uploaded CSV file
+            $headers = Excel::toArray([], $request->file('data'))[0][0];
+            dd($headers);
+            return response()->json(['headers' => $headers]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

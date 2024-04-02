@@ -68,15 +68,25 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::resource('categories', CategoryController::class);
     // Tags CRUD
     Route::resource('tags', TagController::class);
-    // Listing CRUD
-    Route::resource('listings', ListingController::class);
-    Route::get('listings/data/export', [ListingController::class, 'export'])->name('listings.data.export');
-    Route::post('listings/data/handel/export', [ListingController::class, 'handelExport'])->name('listings.data.handel.export');
-    Route::get('listings/data/import', [ListingController::class, 'import'])->name('listings.data.import');
-    Route::post('listings/filter', [ListingController::class, 'filter'])->name('listings.filter');
-    Route::post('listings/filter/export', [ListingController::class, 'exportFilter'])->name('listings.export.filtered');
-    Route::post('listings/data/handel/import', [ListingController::class, 'handelImport'])->name('listings.data.handel.import');
-    Route::get('user/import/export/logs', [ListingController::class, 'importExportLogs'])->name('user.import.export.logs');
+
+    Route::controller(ListingController::class)->name('listings.')->prefix('listings/')->group(function() {
+        Route::get('view', 'index')->name('index');
+        Route::get('create', 'create')->name('create');
+        Route::post('store', 'store')->name('store');
+        Route::get('{id}/show', 'show')->name('show');
+        Route::get('{id}/edit', 'edit')->name('edit');
+        Route::patch('{id}/update', 'update')->name('update');
+        Route::delete('{id}/delete', 'destroy')->name('destroy');
+        Route::get('data/export', 'export')->name('data.export');
+        Route::post('data/handel/export', 'handelExport')->name('data.handel.export');
+        Route::get('data/import', 'import')->name('data.import');
+        Route::post('filter', 'filter')->name('filter');
+        Route::post('filter/export', 'exportFilter')->name('export.filtered');
+        Route::post('data/handel/import', 'handelImport')->name('data.handel.import');
+        Route::get('user/import/export/logs', 'importExportLogs')->name('user.import.export.logs');
+        Route::get('import/headers', 'getHeaders')->name('import.headers');
+        Route::get('import/columns', 'getColumns')->name('import.columns');
+    });
 
     Route::controller(FieldController::class)->name('field.')->group(function() {
         Route::get('fields', 'index')->name('index');
