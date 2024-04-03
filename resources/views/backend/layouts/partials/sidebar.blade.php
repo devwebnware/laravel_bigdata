@@ -5,7 +5,7 @@
             <a href="javascript:void(0)" class="nk-nav-compact nk-quick-nav-icon d-none d-xl-inline-flex" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
         </div>
         <div class="nk-sidebar-brand">
-            <a href="{{ route('dashboard') }}"><em class="icon ni ni-linux" style="color: green; font-size: 30px"></em></a>
+            <a href="{{ route('dashboard') }}"><em class="icon ni ni-linux" style="color: white; font-size: 30px"></em></a>
         </div>
     </div>
     <div class="nk-sidebar-element nk-sidebar-body">
