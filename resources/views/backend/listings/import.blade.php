@@ -11,11 +11,15 @@
                 <label for="name">Select file</label>
                 <input type="file" id="file" name='data' />
             </div>
-            <button type="submit" class="btn btn-primary" class="btn btn-success">Upload</button>
+            <div class="d-flex flex-direction-row">
+                <button type="submit" class="btn btn-primary" class="btn btn-success">Upload</button>
+                <div class="spinner-border ml-3 d-none" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
         </form>
     </div>
 </div>
-
 <!-- Start Filter Modal -->
 <button data-toggle="modal" class="btn trigger-modal d-none btn-info" data-target="#importModal"><em class="icon ni ni-filter"></em></button>
 <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -53,8 +57,8 @@
     $(document).ready(function() {
         $("#importFileForm").on("submit", function(e) {
             e.preventDefault();
+            let $form = jQuery(this);
             var formData = new FormData(this);
-
             $.ajax({
                 url: "{{ route('listings.data.handel.import') }}",
                 type: "POST",
@@ -62,6 +66,9 @@
                 contentType: false,
                 cache: false,
                 processData: false,
+                beforeSend: function() {
+                    $form.find('.spinner-border').removeClass('d-none');
+                },
                 success: function(data) {
                     let headers = data.headers;
                     let columnNames = data.columnNames;
@@ -78,7 +85,7 @@
                             `<tr>
                                 <td style="width: 30%; text-align: center">${headers[i]}</td>
                                 <td style="width: 70%; text-align: center">
-                                    <select class="" name="headers[${headers[i]}]">
+                                    <select class="form-select form-control" name="headers[${headers[i]}]">
                                         ${options.join('')}
                                     </select>
                                 </td>
@@ -87,7 +94,11 @@
                     }
                     $(".trigger-modal").trigger('click');
                 },
+                complete: function() {
+                    $form.find('.spinner-border').addClass('d-none');
+                },
                 error: function(data) {
+                    $form.find('.spinner-border').addClass('d-none');
                     console.log('Error:', data);
                 }
             });
