@@ -1,1 +1,1 @@
-<img src="{{asset('assets/img/logo-rectangle.png')}}" class="w-100 ad-logo-image" alt="Admin Dashboard logo">
+<em class="icon w-100 ad-logo-image ni ni-linux" style="color: black; font-size: 50px"></em>
