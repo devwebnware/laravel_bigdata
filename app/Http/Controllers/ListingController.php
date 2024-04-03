@@ -142,9 +142,17 @@ class ListingController extends Controller
             Excel::queueImport($import, $request->file('data')); // CSV data import job
             return response()->json(['message' => 'Import job queued']);
         } else {
+            // Start: get columns names from listings table
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
-            $headers = Excel::toArray([], $request->file('data'))[0][0];
+            // End
+            // Start: Get columns names from csv file
+            $file = fopen($request->file('data'), 'r');
+            if ($file !== false) {
+                $headers = fgetcsv($file);
+                fclose($file);
+            }
+            // End
             return response()->json(['headers' => $headers, 'columnNames' => $columnNames]);
         }
     }

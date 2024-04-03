@@ -3,21 +3,22 @@
 namespace App\Jobs;
 
 use App\Models\Listing;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Queue;
+use Maatwebsite\Excel\Concerns\ToModel;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
 
-class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue
+class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadingRow
 {
     protected $mappingData;
 
     public function __construct($mappingData)
     {
-        dd($mappingData);
+        $this->mappingData = $mappingData;
     }
 
     public function handle(): void
@@ -26,7 +27,6 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue
 
     public function model(array $row)
     {
-        dd($this->mappingData, $row);
         $listing = Listing::where('name', $row[$this->mappingData['name']])->first();
         if ($listing) {
             foreach ($this->mappingData as $key => $value) {
@@ -46,8 +46,6 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue
 
     public function chunkSize(): int
     {
-        // Specify the number of rows to process per chunk
-        // Adjust this value based on your application's requirements
-        return 100;
+        return 100; // Change chunk size according to your needs.
     }
 }
