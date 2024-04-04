@@ -24,18 +24,18 @@
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
-                        <a href="{{ route('field.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-property-add"></em></span>
-                            <span class="nk-menu-text">Custom Field</span>
-                        </a>
-                    </li>
-                    <li class="nk-menu-item has-sub">
                         <a href="{{ route('tags.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-tag-alt"></em></span>
                             <span class="nk-menu-text">Tag</span>
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
-                        <a href="{{ route('listings.user.import.export.logs') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-view-list-fill"></em></span>
-                            <span class="nk-menu-text">Logs</span>
+                        <a href="{{ route('field.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-property-add"></em></span>
+                            <span class="nk-menu-text">Listing Custom Field</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item has-sub">
+                        <a href="{{ route('listings.import.data.status') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-download-cloud"></em></span>
+                            <span class="nk-menu-text">Import Status</span>
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub active current-page"><a href="#" class="nk-menu-link nk-menu-toggle"><span class="nk-menu-icon"><em class="icon ni ni-list-thumb-alt"></em></span><span class="nk-menu-text">Listing</span></a>
@@ -45,7 +45,13 @@
                             <li class="nk-menu-item active current-page"><a href="{{ route('listings.data.export') }}" class="nk-menu-link"><span class="nk-menu-text">Export</span></a></li>
                         </ul>
                     </li>
+                    <li class="nk-menu-item has-sub">
+                        <a href="{{ route('listings.user.import.export.logs') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-view-list-fill"></em></span>
+                            <span class="nk-menu-text">Logs</span>
+                        </a>
+                    </li>
                     @endcan
+                </ul>
             </div>
         </div>
     </div>
