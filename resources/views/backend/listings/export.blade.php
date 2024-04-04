@@ -9,6 +9,14 @@
             @csrf
             <div class="modal-body-md">
                 <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <label class="form-label">Select columns to export <span class="text-muted">(For all left blank)</span></label>
+                        <select class="form-select" multiple="multiple" id="columns" data-placeholder="Select Columns" name="columnNames[]">
+                            @foreach($columnNames as $column)
+                            <option value="{{ $column }}">{{ucwords( $column )}} </option>
+                            @endforeach
+                        </select>
+                    </div>
                     <div class="col-md-3 mb-2">
                         <label class="form-label">Listing Name</label>
                         <input type="text" name="listing_name" id="listing_name" class="form-control" />

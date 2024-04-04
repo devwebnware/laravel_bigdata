@@ -6,7 +6,7 @@
 <div class="d-flex flex-row">
     @if(Route::currentRouteName() == 'listings.index')
     <a href="{{ route('listings.data.import')}}" class='btn btn-secondary mr-2'>Import</a>
-    <a href="{{ route('listings.data.export')}}" class='btn btn-secondary mr-2'>Export</a>
+    <a href="{{ route('listings.data.handel.export')}}" class='btn btn-secondary mr-2'>Export</a>
     <a href="{{ route('listings.create')}}" class='btn btn-info mr-auto text-decoration-none'>Add Listing</a>
     @endif
     @if(Route::currentRouteName() == 'listings.filter')
@@ -24,14 +24,22 @@
         <div class="modal-content">
             <form method="POST" action="{{ route('listings.filter')}}" id="filterForm">
                 @csrf
-                <a href="#" class="close" data-dismiss="modal" aria-label="Close">
-                    <em class="icon ni ni-cross"></em>
-                </a>
                 <div class="modal-header">
                     <h5 class="modal-title">Filter</h5>
+                    <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                        <em class="icon ni ni-cross"></em>
+                    </a>
                 </div>
                 <div class="modal-body-md">
                     <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label class="form-label">Select columns to export <span class="text-muted">(For all left blank)</span></label>
+                            <select class="form-select" multiple="multiple" id="columns" data-placeholder="Select Columns" name="columnNames[]">
+                                @foreach($dropdownData['columnNames'] as $column)
+                                <option value="{{ $column }}">{{ucwords( $column )}} </option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Listing Name</label>
                             <input type="text" name="name" id="name" class="form-control" />
@@ -129,15 +137,14 @@
 <!-- End Filter Modal -->
 
 <div class="card card-bordered table-responsive mt-3 card-preview">
-    <table class="table table-tranx w-auto">
-        <thead>
-            <tr class="tb-tnx-head">
-                <th class="w-50 tb-tnx-info">#</th>
-                <th class="w-50 tb-tnx-info">Action</th>
-                <th class="w-50 tb-tnx-info">Tags</th>
-                @foreach($columnNames as $column)
-                @if($column !== 'id' && $column !== 'created_by' && $column !== 'created_at' && $column !== 'updated_at')
-                <th class="tb-tnx-info">{{ $column }}</th>
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Action</th>
+                @foreach($dropdownData['columnNames'] as $column)
+                @if($column !== 'id')
+                <th scope="col">{{ $column }}</th>
                 @endif
                 @endforeach
             </tr>
@@ -148,127 +155,24 @@
             @endphp
             @forelse($listings as $key => $listing)
             <tr>
-                <td class="w-50">{{ substr($serialNumber++,0, 20) }}</td>
-                <td>
+                <td scope="row">{{ substr($serialNumber++,0, 20) }}</td>
+                <td scope="row">
                     <div class="drodown">
                         <a href="javascript:void(0)" class="dropdown-toggle btn btn-icon btn-trigger" data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <ul class="link-list-opt">
-                                <li><a href="{{ route('listings.edit', ['listing' => $listing->id]) }}"><em style="font-size: 20px;" class="icon ni ni-edit"></em>Edit</a></li>
+                                <li><a href="{{ route('listings.edit', ['id' => $listing->id]) }}"><em style="font-size: 20px;" class="icon ni ni-edit"></em>Edit</a></li>
                                 <li><a href="#" onclick="deleteRequest('{{$listing->name}}','{{$listing->id}}')"><em class="icon ni ni-trash"></em>Delete</a></li>
-                                <li><a href="{{ route('listings.show', ['listing' => $listing->id]) }}"><em class="icon ni ni-eye"></em>Show</a></li>
+                                <li><a href="{{ route('listings.show', ['id' => $listing->id]) }}"><em class="icon ni ni-eye"></em>Show</a></li>
                             </ul>
                         </div>
                     </div>
                 </td>
-                <td>
-                    @foreach($listing->listingTags as $tag)
-                    <span class="badge rounded-pill" style="background-color: {{ $tag->tagName->bg_color ?? 'default_color' }}; color: {{ $tag->tagName->color ?? 'color' }} ">
-                        {{ substr($tag->tagName->name, 0, 20) }}
-                    </span>
-                    @endforeach
-                </td>
-                <td>{{ substr($listing->name,0, 20) }}</td>
-                <td>{{ substr($listing->category->name,0, 20) }}</td>
-                {{-- <td>{{ substr($listing->tag->name,0, 20) }}</td> --}}
-                <td>{{ substr($listing->query,0, 20) }}</td>
-                <td>{{ substr($listing->site,0, 20) }}</td>
-                <td>{{ substr($listing->type,0, 20) }}</td>
-                <td>{{ substr($listing->subtypes,0, 20) }}</td>
-                <td>{{ substr($listing->phone,0, 20) }}</td>
-                <td>{{ substr($listing->full_address,0, 20) }}</td>
-                <td>@if(isset($listing->borough))
-                    {{ substr($listing->borough,0, 20)}}
-                    @else
-                    N/A
-                    @endif
-                </td>
-                <td>@if(isset($listing->street))
-                    {{ substr($listing->street,0, 20) }}
-                    @else
-                    N/A
-                    @endif
-                </td>
-                <td>{{ substr($listing->city,0, 20) }}</td>
-                <td>{{ substr($listing->postal_code,0, 20) }}</td>
-                <td>{{ substr($listing->state,0, 20) }}</td>
-                <td>{{ substr($listing->us_state,0, 20) }}</td>
-                <td>{{ substr($listing->country,0, 20) }}</td>
-                <td>{{ substr($listing->country_code,0, 20) }}</td>
-                <td>{{ substr($listing->latitude,0, 20) }}</td>
-                <td>{{ substr($listing->longitude,0, 20) }}</td>
-                <td>{{ substr($listing->time_zone,0, 20) }}</td>
-                <td>{{ substr($listing->plus_code,0, 20) }}</td>
-                <td>{{ substr($listing->area_service,0, 20) }}</td>
-                <td>{{ substr($listing->rating,0, 20) }}</td>
-                <td>{{ substr($listing->reviews,0, 20) }}</td>
-                <td>{{ substr($listing->reviews_link,0, 20) }}</td>
-                <td>{{ substr($listing->reviews_per_score,0, 20) }}</td>
-                <td>{{ substr($listing->reviews_per_score_1,0, 20) }}</td>
-                <td>{{ substr($listing->reviews_per_score_2,0, 20) }}</td>
-                <td>{{ substr($listing->reviews_per_score_3,0, 20) }}</td>
-                <td>{{ substr($listing->reviews_per_score_4,0, 20) }}</td>
-                <td>{{ substr($listing->reviews_per_score_5,0, 20) }}</td>
-                <td>{{ substr($listing->photos_count,0, 20) }}</td>
-                <td>{{ substr($listing->photo,0, 20) }}</td>
-                <td>{{ substr($listing->street_view,0, 20) }}</td>
-                <td>{{ substr($listing->located_in,0, 20) }}</td>
-                <td>{{ substr($listing->working_hours,0, 20) }}</td>
-                <td>{{ substr($listing->working_hours_old_format,0, 20) }}</td>
-                <td>{{ substr($listing->other_hours,0, 20) }}</td>
-                <td>{{ substr($listing->popular_times,0, 20) }}</td>
-                <td>{{ substr($listing->business_status,0, 20) }}</td>
-                <td>{{ substr($listing->about,0, 20) }}</td>
-                <td>{{ substr($listing->range,0, 20) }}</td>
-                <td>{{ substr($listing->posts,0, 20) }}</td>
-                <td>{{ substr($listing->logo,0, 20) }}</td>
-                <td>{{ substr($listing->description,0, 20) }}</td>
-                <td>{{ substr($listing->verified,0, 20) }}</td>
-                <td>{{ substr($listing->owner_id,0, 20) }}</td>
-                <td>{{ substr($listing->owner_title,0, 20) }}</td>
-                <td>{{ substr($listing->owner_link,0, 20) }}</td>
-                <td>{{ substr($listing->reservation_links,0, 20) }}</td>
-                <td>{{ substr($listing->booking_appointment_link,0, 20) }}</td>
-                <td>{{ substr($listing->menu_link,0, 20) }}</td>
-                <td>{{ substr($listing->order_links,0, 20) }}</td>
-                <td>{{ substr($listing->location_link,0, 20) }}</td>
-                <td>{{ substr($listing->place_id,0, 20) }}</td>
-                <td>{{ substr($listing->google_id,0, 20) }}</td>
-                <td>{{ substr($listing->cid,0, 20) }}</td>
-                <td>{{ substr($listing->reviews_id,0, 20) }}</td>
-                <td>{{ substr($listing->located_google_id,0, 20) }}</td>
-                <td>{{ substr($listing->email_1,0, 20) }}</td>
-                <td>{{ substr($listing->email_1_full_name,0, 20) }}</td>
-                <td>{{ substr($listing->email_1_title,0, 20) }}</td>
-                <td>{{ substr($listing->email_2,0, 20) }}</td>
-                <td>{{ substr($listing->email_2_full_name,0, 20) }}</td>
-                <td>{{ substr($listing->email_2_title,0, 20) }}</td>
-                <td>{{ substr($listing->email_3,0, 20) }}</td>
-                <td>{{ substr($listing->email_3_full_name,0, 20) }}</td>
-                <td>{{ substr($listing->email_3_title,0, 20) }}</td>
-                <td>{{ substr($listing->phone_1,0, 20) }}</td>
-                <td>{{ substr($listing->phone_2,0, 20) }}</td>
-                <td>{{ substr($listing->phone_3,0, 20) }}</td>
-                <td>{{ substr($listing->facebook,0, 20) }}</td>
-                <td>{{ substr($listing->instagram,0, 20) }}</td>
-                <td>{{ substr($listing->linkedin,0, 20) }}</td>
-                <td>{{ substr($listing->medium,0, 20) }}</td>
-                <td>{{ substr($listing->reddit,0, 20) }}</td>
-                <td>{{ substr($listing->skype,0, 20) }}</td>
-                <td>{{ substr($listing->snapchat,0, 20) }}</td>
-                <td>{{ substr($listing->telegram,0, 20) }}</td>
-                <td>{{ substr($listing->whatsapp,0, 20) }}</td>
-                <td>{{ substr($listing->twitter,0, 20) }}</td>
-                <td>{{ substr($listing->vimeo,0, 20) }}</td>
-                <td>{{ substr($listing->youtube,0, 20) }}</td>
-                <td>{{ substr($listing->github,0, 20) }}</td>
-                <td>{{ substr($listing->crunchbase,0, 20) }}</td>
-                <td>{{ substr($listing->website_title,0, 20) }}</td>
-                <td>{{ substr($listing->website_generator,0, 20) }}</td>
-                <td>{{ substr($listing->website_description,0, 20) }}</td>
-                <td>{{ substr($listing->website_keywords,0, 20) }}</td>
-                <td>{{ substr($listing->website_has_fb_pixel,0, 20) }}</td>
-                <td>{{ substr($listing->website_has_google_tag,0, 20) }}</td>
+                @foreach($listing->getAttributes() as $key => $attribute)
+                @if($key !== 'id')
+                <td scope="row">{{ substr($attribute, 0, 20) }}</td>
+                @endif
+                @endforeach
             </tr>
             @empty
             <tr class="text-center">
@@ -285,6 +189,8 @@
     @method('delete')
     @csrf
 </form>
+
+
 @push('custom-js')
 <script>
     // Form submittion for listing delete
