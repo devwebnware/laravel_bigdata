@@ -24,14 +24,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
-        // $schedule->command('close:ticket')->daily();
-        $schedule->command('recurring:invoice')->daily();
         $schedule->command('backup:clean')->daily();
         $schedule->command('backup:run --only-db')->daily();
-        $schedule->command('send:reminder-notification-daily')->daily();
-        $schedule->command('recurring:task')->daily();
-        $schedule->command('send:anniversaryMail')->dailyAt("08:00");
+        $schedule->command('queue:listen')
+             ->everyTenSeconds()
+             ->withoutOverlapping();
     }
 
     /**
