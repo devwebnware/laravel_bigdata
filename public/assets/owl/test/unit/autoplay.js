@@ -8,7 +8,6 @@ function FakeClock() {
 	this.tick = function(duration) {
 		value += duration;
 	};
-	// TODO: This is broken and has to be fixed in the near future
 	this.Date = function() {
 		this.getTime = function() {
 			return value;
@@ -56,7 +55,6 @@ function change_timeout(autoplay, first, second, wait) {
 //
 // 	equal(autoplay.read(), 0);
 // });
-// TODO: See todo above, seems to be broken since a while as we are trying to assign the global const Date to a new function
 // test('changing autoplay timeout values', function() {
 // 	expect(4);
 //

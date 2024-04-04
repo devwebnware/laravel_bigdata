@@ -2865,7 +2865,7 @@ var range_WrappedRange = /*#__PURE__*/function () {
     value: function nodes(pred, options) {
       pred = pred || func.ok;
       var includeAncestor = options && options.includeAncestor;
-      var fullyContains = options && options.fullyContains; // TODO compare points and sort
+      var fullyContains = options && options.fullyContains; 
 
       var startPoint = this.getStartPoint();
       var endPoint = this.getEndPoint();
@@ -7439,7 +7439,6 @@ var Buttons_Buttons = /*#__PURE__*/function () {
                 tooltip: _this.options.tooltip
               }).render());
             });
-            /* TODO: do we have to record recent custom colors within cookies? */
 
             var customColors = [['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF']];
             $dropdown.find('.note-holder-custom').each(function (idx, item) {

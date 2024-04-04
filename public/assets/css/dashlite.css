@@ -26173,8 +26173,6 @@ div.dt-buttons .dual-listbox a.processing.dual-listbox__button:after,
 /* inner-wrappers are responsible for being absolute */
 
 
-/* TODO: best place for this? */
-
 .fc-liquid-hack td,
 .fc-liquid-hack th {
     position: relative;
@@ -26597,7 +26595,6 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     overflow: hidden;
     direction: ltr;
     /* hack for chrome computing the scroller's right/left wrong for rtl. undone below... */
-    /* TODO: demonstrate in codepen */
 }
 
 .fc .fc-scroller-harness-liquid {
@@ -26691,14 +26688,11 @@ When it's NOT activated, the fc-button classes won't even be in the DOM.
     position: -webkit-sticky;
     position: sticky;
     z-index: 2;
-    /* TODO: var */
-    /* TODO: box-shadow when sticking */
 }
 
 .fc .fc-scrollgrid-section-header.fc-scrollgrid-section-sticky>* {
     top: 0;
     /* because border-sharing causes a gap at the top */
-    /* TODO: give safari -1. has bug */
 }
 
 .fc .fc-scrollgrid-section-footer.fc-scrollgrid-section-sticky>* {
@@ -27655,7 +27649,6 @@ A VERTICAL event
 
 .fc .fc-timegrid-col-bg {
     z-index: 2;
-    /* TODO: kill */
 }
 
 .fc .fc-timegrid-col-bg .fc-non-business {
