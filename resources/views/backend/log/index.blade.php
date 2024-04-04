@@ -10,8 +10,8 @@
                     <th scope="col">S. No.</th>
                     <th scope="col">User</th>
                     <th scope="col">Type</th>
-                <th scope="col">Created On</th>
-            </tr>
+                    <th scope="col">Created On</th>
+                </tr>
             </thead>
             <tbody>
                 @forelse($logs as $key => $log)
