@@ -10,29 +10,31 @@
     </div>
 </div>
 
-<div class="card card-bordered table-responsive mt-3 card-preview">
-    <table class="table table-tranx w-auto">
-        <thead>
-            <tr class="tb-tnx-head">
-                <th>#</th>
-                <th>Field Name</th>
-                <th>Type</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($fields as $key => $field)
-            <tr>
-                <td>{{ ++$key }}</td>
-                <td>{{ $field->name }}</td>
-                <td>{{ $field->type }}</td>
-            </tr>
-            @empty
-            <tr>
-                <td colspan="3">No Data Found</td>
-            </tr>
-            @endforelse
-        </tbody>
-    </table>
+<div class="card card-bordered mt-3 card-preview">
+    <div class="p-5">
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Field Name</th>
+                    <th scope="col">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($fields as $key => $field)
+                <tr>
+                    <td scope="row">{{ ++$key }}</td>
+                    <td scope="row">{{ $field->name }}</td>
+                    <td scope="row">{{ $field->type }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td scope="row" colspan="3">No Data Found</td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
 </div>
 @push('custom-js')
 
