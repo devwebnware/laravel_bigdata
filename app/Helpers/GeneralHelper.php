@@ -5,11 +5,16 @@ use App\Models\Category;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Listing;
+use Illuminate\Support\Facades\Schema;
 
 class GeneralHelper
 {
     public static function getDropdowns()
     {
+        // Get column names
+        $tableName = 'listings';
+        $columnNames = Schema::getColumnListing($tableName);
+
         $listings = Listing::all();
         $cities = $listings->pluck('city')->filter()->unique();
         $states = $listings->pluck('state')->filter()->unique();
@@ -26,6 +31,7 @@ class GeneralHelper
             'categories' => $categories,
             'tags'=> $tags,
             'users' => $users,
+            'columnNames' => $columnNames,
         ];
     }
 }
