@@ -35,9 +35,9 @@
                 </div>
                 <div class="modal-body-md">
                     <table class="table w-100" id="headersMapTable">
-                        <thead>
-                            <th class="text-center">File Column</th>
-                            <th class="text-center">Database Column</th>
+                        <thead class="thead-dark">
+                            <th scope="col" class="text-center">File Column</th>
+                            <th scope="col" class="text-center">Database Column</th>
                         </thead>
                         <tbody id="headersMapBody">
                         </tbody>
@@ -45,6 +45,9 @@
                 </div>
                 <div class="modal-footer">
                     <div class="mt-2">
+                        <a href="#" class="btn btn-secondery" data-dismiss="modal" aria-label="Close">
+                            Close
+                        </a>
                         <button type="submit" class="btn btn-info">Import</button>
                     </div>
                 </div>
@@ -83,9 +86,9 @@
                     for (let i = 0; i < headers.length; i++) {
                         body.append(
                             `<tr>
-                                <td style="width: 30%; text-align: center">${headers[i]}</td>
-                                <td style="width: 70%; text-align: center">
-                                    <select class="form-select form-control" name="headers[${headers[i]}]">
+                                <td scope="row" style="width: 30%; text-align: center">${headers[i]}</td>
+                                <td scope="row" style="width: 70%; text-align: center">
+                                    <select class="form-select form-control" style="cursor: pointer" name="headers[${headers[i]}]">
                                         ${options.join('')}
                                     </select>
                                 </td>
@@ -120,7 +123,9 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    console.log(data);
+                    setTimeout(function() {
+                        window.location.href = "{{ route('listings.data.import') }}";
+                    }, 2000);
                 },
                 error: function(data) {
                     console.log('Error:', data);
