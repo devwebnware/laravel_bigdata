@@ -64,30 +64,38 @@ Route::group(['middleware' => ['role:admin']], function () {
 
     Route::post('/register', [RegisteredUserController::class, 'store'])
         ->middleware('guest');
+
     // Category CRUD
     Route::resource('categories', CategoryController::class);
+
     // Tags CRUD
     Route::resource('tags', TagController::class);
 
     Route::controller(ListingController::class)->name('listings.')->prefix('listings/')->group(function() {
+        // Listing CRUD
         Route::get('view', 'index')->name('index');
-        Route::get('create', 'create')->name('create');
         Route::post('store', 'store')->name('store');
         Route::get('{id}/show', 'show')->name('show');
         Route::get('{id}/edit', 'edit')->name('edit');
+        Route::get('create', 'create')->name('create');
+        Route::post('filter', 'filter')->name('filter');
         Route::patch('{id}/update', 'update')->name('update');
         Route::delete('{id}/delete', 'destroy')->name('destroy');
-        Route::get('data/export', 'export')->name('data.export');
-        Route::post('data/handel/export', 'handelExport')->name('data.handel.export');
-        Route::get('data/import', 'import')->name('data.import');
-        Route::post('filter', 'filter')->name('filter');
-        Route::post('filter/export', 'exportFilter')->name('export.filtered');
-        Route::post('data/handel/import', 'handelImport')->name('data.handel.import');
+
+        // Import/Export Logs
         Route::get('user/import/export/logs', 'importExportLogs')->name('user.import.export.logs');
-        Route::get('import/headers', 'getHeaders')->name('import.headers');
+
+        // Listings Import/Export Operations
+        Route::get('data/export', 'export')->name('data.export');   // Export page view
+        Route::get('data/import', 'import')->name('data.import');   // Import page view
         Route::get('import/columns', 'getColumns')->name('import.columns');
+        Route::post('filter/export', 'exportFilter')->name('export.filtered');
+        Route::get('import/data/status', 'getStatus')->name('import.data.status');  
+        Route::get('data/handel/export', 'handelExport')->name('data.handel.export');
+        Route::post('data/handel/import', 'handelImport')->name('data.handel.import');
     });
 
+    // Custom Fields Operations
     Route::controller(FieldController::class)->name('field.')->group(function() {
         Route::get('fields', 'index')->name('index');
         Route::get('field/create', 'create')->name('create');
