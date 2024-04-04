@@ -10,7 +10,7 @@ class ExportImportLog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'type',
+        'type', // 1 = export, 0 = import
         'user_id',
     ];
 
