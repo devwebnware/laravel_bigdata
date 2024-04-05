@@ -11,10 +11,6 @@ class GeneralHelper
 {
     public static function getDropdowns()
     {
-        // Get column names
-        $tableName = 'listings';
-        $columnNames = Schema::getColumnListing($tableName);
-
         $listings = Listing::all();
         $cities = $listings->pluck('city')->filter()->unique();
         $states = $listings->pluck('state')->filter()->unique();
@@ -31,7 +27,6 @@ class GeneralHelper
             'categories' => $categories,
             'tags'=> $tags,
             'users' => $users,
-            'columnNames' => $columnNames,
         ];
     }
 }
