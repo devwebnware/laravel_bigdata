@@ -6,14 +6,17 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Models\Listing;
 use App\Models\Category;
-use App\Helpers\GeneralHelper;
 use Illuminate\Http\Request;
+use App\Helpers\GeneralHelper;
+use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
 {
 	public function dashboard()
 	{
 		if (auth()->check()) {
+			$tableName = 'listings';
+			$columnNames = Schema::getColumnListing($tableName);	
 			$categoriesCount = Category::count();
 			$tagsCount = Tag::count();
 			$listings = Listing::all();
@@ -21,12 +24,12 @@ class DashboardController extends Controller
 			$dropdownData = GeneralHelper::getDropdowns();
 			$listingsCount = $listings->count();
 			
-			return view('dashboard', compact('categoriesCount', 'tagsCount', 'listingsCount', 'dropdownData'));
+			return view('dashboard', compact('categoriesCount', 'tagsCount', 'listingsCount', 'dropdownData', 'columnNames'));
 		} else {
 			return redirect()->route('index');
 		}
 	}
-	
+
 	public function changePassword(Request $request)
 	{
 		if ($request->new_password == $request->confirm_password) {

@@ -51,7 +51,7 @@
                     <div class="col-md-12 mb-2">
                         <label class="form-label">Select columns to export <span class="text-muted">(For all left blank)</span></label>
                         <select class="form-select" multiple="multiple" id="columns" data-placeholder="Select Columns" name="columnNames[]">
-                            @foreach($dropdownData['columnNames'] as $column)
+                            @foreach($columnNames as $column)
                             <option value="{{ $column }}">{{ucwords( $column )}} </option>
                             @endforeach
                         </select>
