@@ -171,7 +171,7 @@ class ListingController extends Controller
         } else {
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
-        }
+        }   
 
         $dropdownData = GeneralHelper::getDropdowns();
         $query = $this->applyFilters($query, $request->except('_token'));
