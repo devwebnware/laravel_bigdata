@@ -3,6 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Listing;
+use App\Models\Category;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Illuminate\Support\Facades\Validator;
@@ -10,7 +12,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-
 
 class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadingRow
 {
@@ -30,15 +31,49 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
         $listing = Listing::where('name', $row[$this->mappingData['name']])->first();
         if ($listing) {
             foreach ($this->mappingData as $key => $value) {
-                $listing->update([
-                    $value => $row[$key]
-                ]);
-            };
+                if ($value === 'category_id') {
+                    if (gettype($row[$key]) === 'string') {
+                        $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
+                    } else {
+                        $category = Category::find($row[$key]);
+                    }
+                    Log::info('Key and value', [
+                        'key' => $key,
+                        'value' => $value,
+                        'category' => $category
+                    ]);
+                    if ($category) {
+                        $listing->update([
+                            $value => $category->id
+                        ]);
+                    }
+                } else {
+                    $listing->update([
+                        $value => $row[$key]
+                    ]);
+                }
+            }
         } else {
             $listing = new Listing();
             foreach ($this->mappingData as $key => $value) {
-                $listing->$value = $row[$key];
-            };
+                if ($value === 'category_id') {
+                    if (gettype($row[$key]) === 'string') {
+                        $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
+                    } else {
+                        $category = Category::find($row[$key]);
+                    }
+                    Log::info('Key and value', [
+                        'key' => $key,
+                        'value' => $value,
+                        'category' => $category
+                    ]);
+                    if ($category) {
+                        $listing->category_id = $category->id;
+                    }
+                } else {
+                    $listing->$value = $row[$key];
+                }
+            }
             $listing->save();
         }
         return $listing;

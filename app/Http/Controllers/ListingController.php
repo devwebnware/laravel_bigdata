@@ -8,10 +8,12 @@ use App\Models\Job;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\ListingTag;
+use App\Models\ImportJobStatus;
 use App\Jobs\ImportDataJob;
 use Illuminate\Http\Request;
 use App\Events\FileUploaded;
 use App\Helpers\GeneralHelper;
+use App\Events\ImportJobStart;
 use App\Models\ExportImportLog;
 use App\Exports\ListingsExport;
 use App\Imports\ListingsImport;
@@ -27,9 +29,11 @@ class ListingController extends Controller
     public function index()
     {
         $tags = ListingTag::all();
+        $tableName = 'listings';
+        $columnNames = Schema::getColumnListing($tableName);
         $dropdownData = GeneralHelper::getDropdowns();
         $listings = Listing::paginate(10);
-        return view('backend.listings.index', compact('listings', 'tags', 'dropdownData'));
+        return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'columnNames'));
     }
 
     public function create()
@@ -143,22 +147,24 @@ class ListingController extends Controller
             // $fileData = [
             //     'file_name'
             // ];
+            $jobStatus = new ImportJobStatus();
+            $jobStatus->file_name = $request->file('data')->getClientOriginalName();
+            $jobStatus->save();
+            $jobStatusId = $jobStatus->id;
             $import = new ImportDataJob($request['headers']);
             Excel::queueImport($import, $request->file('data'));
             $this->exportImportLogs(0);
             return redirect()->route('listings.data.import');
         } else {
-            // Start: get columns names from listings table
+            // Get columns names from listings table
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
-            // End
-            // Start: Get columns names from csv file
+            // Get columns names from csv file
             $file = fopen($request->file('data'), 'r');
             if ($file !== false) {
                 $headers = fgetcsv($file);
                 fclose($file);
             }
-            // End
             return response()->json(['headers' => $headers, 'columnNames' => $columnNames]);
         }
     }
@@ -171,7 +177,7 @@ class ListingController extends Controller
         } else {
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
-        }   
+        }
 
         $dropdownData = GeneralHelper::getDropdowns();
         $query = $this->applyFilters($query, $request->except('_token'));
@@ -191,7 +197,7 @@ class ListingController extends Controller
         $query = $this->applyFilters($query, $filter);
         $listings = $query->select($columnNames)->get();
         $this->exportImportLogs(1);
-        return Excel::download(new ListingsExport($listings), 'listings.csv');
+        return Excel::download(new ListingsExport($listings, $columnNames), 'listings.csv');
     }
 
     // Common function for "exportFilter", and "filter" functions
@@ -241,8 +247,6 @@ class ListingController extends Controller
 
     public function getStatus()
     {
-        $job = Job::all();
-        dd($job);
         return view('backend.listings.status');
     }
 
