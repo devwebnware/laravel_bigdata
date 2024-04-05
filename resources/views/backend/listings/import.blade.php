@@ -123,9 +123,7 @@
                 cache: false,
                 processData: false,
                 success: function(data) {
-                    setTimeout(function() {
-                        window.location.href = "{{ route('listings.data.import') }}";
-                    }, 2000);
+                    window.location.href = "{{ route('listings.data.import') }}";
                 },
                 error: function(data) {
                     console.log('Error:', data);
