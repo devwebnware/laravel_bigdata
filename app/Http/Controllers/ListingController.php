@@ -169,7 +169,7 @@ class ListingController extends Controller
             if ($file !== false) {
                 $headers = fgetcsv($file);
                 fclose($file);
-            }
+            }   
             return response()->json(['headers' => $headers, 'columnNames' => $columnNames]);
         }
     }
@@ -179,6 +179,15 @@ class ListingController extends Controller
         $query = Listing::query();
         if ($request->has('columnNames')) {
             $columnNames = $request->columnNames;
+
+            $requiredColumns = ['name', 'id'];
+            foreach ($requiredColumns as $columnName) {
+                // Check if column names has required fields
+                if (!in_array($columnName, $columnNames)) {
+                    // if required columns not found then add them
+                    array_unshift($columnNames, $columnName);
+                }
+            }
         } else {
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
