@@ -79,17 +79,26 @@
                     body.empty();
                     let options = [];
                     options.push('<option value="Default Option" selected disabled>Default Option</option>');
-                    for (let i = 0; i < columnNames.length; i++) {
-                        let option = `<option value="${columnNames[i]}">${columnNames[i]}</option>`;
-                        options.push(option);
-                    }
                     for (let i = 0; i < headers.length; i++) {
+                        let selectedOption = '';
+                        for (let j = 0; j < columnNames.length; j++) {
+                            if (columnNames[j] === headers[i]) {
+                                selectedOption = 'selected';
+                                break;
+                            }
+                        }
+
+                        let optionElements = columnNames.map(columnName => {
+                            let selected = columnName === headers[i] ? 'selected' : '';
+                            return `<option value="${columnName}" ${selected}>${columnName}</option>`;
+                        });
+
                         body.append(
                             `<tr>
                                 <td scope="row" style="width: 30%; text-align: center">${headers[i]}</td>
                                 <td scope="row" style="width: 70%; text-align: center">
                                     <select class="form-select form-control" style="cursor: pointer" name="headers[${headers[i]}]">
-                                        ${options.join('')}
+                                        ${optionElements.join('')}
                                     </select>
                                 </td>
                             </tr>`
