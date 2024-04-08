@@ -10,7 +10,7 @@ class ListingsExport implements FromCollection, WithHeadings
     protected $listings;
     protected $columnNames;
 
-    public function __construct($listings, $columnNames)
+    public function __construct($listings, $columnNames=null)
     {
         $this->listings = $listings;
         $this->columnNames = $columnNames;
