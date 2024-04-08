@@ -15,7 +15,7 @@ use App\Http\Controllers\FieldController;
 require __DIR__ . '/auth.php';
 
 
-Route::group(['middleware' => ['role:admin']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::resource('user', UserController::class);
     Route::delete('user/{id}/force-delete', [UserController::class, 'forceDelete'])->name('user.forceDelete');
     Route::post('user/assign-role', [UserController::class, 'assignRole'])->name('user.assignrole');
