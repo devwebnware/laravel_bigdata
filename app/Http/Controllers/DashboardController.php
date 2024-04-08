@@ -8,6 +8,7 @@ use App\Models\Listing;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Helpers\GeneralHelper;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
 class DashboardController extends Controller
@@ -16,17 +17,17 @@ class DashboardController extends Controller
 	{
 		if (auth()->check()) {
 			$tableName = 'listings';
-			$columnNames = Schema::getColumnListing($tableName);	
+			$columnNames = Schema::getColumnListing($tableName);
 			$categoriesCount = Category::count();
 			$tagsCount = Tag::count();
 			$listings = Listing::all();
-			
+
 			$dropdownData = GeneralHelper::getDropdowns();
 			$listingsCount = $listings->count();
-			
+
 			return view('dashboard', compact('categoriesCount', 'tagsCount', 'listingsCount', 'dropdownData', 'columnNames'));
 		} else {
-			return redirect()->route('index');
+			return redirect()->route('login');
 		}
 	}
 
