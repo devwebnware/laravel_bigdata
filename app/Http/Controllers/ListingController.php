@@ -8,15 +8,16 @@ use App\Models\Job;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\ListingTag;
-use App\Models\ImportJobStatus;
 use App\Jobs\ImportDataJob;
 use Illuminate\Http\Request;
 use App\Events\FileUploaded;
 use App\Helpers\GeneralHelper;
 use App\Events\ImportJobStart;
+use App\Models\ImportJobStatus;
 use App\Models\ExportImportLog;
 use App\Exports\ListingsExport;
 use App\Imports\ListingsImport;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -28,12 +29,16 @@ class ListingController extends Controller
 
     public function index()
     {
-        $tags = ListingTag::all();
-        $tableName = 'listings';
-        $columnNames = Schema::getColumnListing($tableName);
-        $dropdownData = GeneralHelper::getDropdowns();
-        $listings = Listing::paginate(10);
-        return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'columnNames'));
+        if(auth()->user()->hasRole('admin')){
+            $tags = ListingTag::all();
+            $tableName = 'listings';
+            $columnNames = Schema::getColumnListing($tableName);
+            $dropdownData = GeneralHelper::getDropdowns();
+            $listings = Listing::paginate(10);
+            return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'columnNames'));
+        } else {
+            return redirect()->route('dashboard')->with('error', 'User is not authorized for access.');
+        };
     }
 
     public function create()
