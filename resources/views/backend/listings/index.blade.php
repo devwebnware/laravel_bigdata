@@ -137,7 +137,7 @@
 <!-- End Filter Modal -->
 
 <div class="card card-bordered table-responsive mt-3 card-preview">
-    <table class="table">
+    <table class="table table-bordered">
         <thead class="thead-dark">
             <tr>
                 <th scope="col">#</th>
@@ -170,13 +170,19 @@
                 </td>
                 @foreach($listing->getAttributes() as $key => $attribute)
                 @if($key !== 'id')
-                <td scope="row">{{ substr($attribute, 0, 20) }}</td>
+                <td scope="row">
+                    @if($attribute)
+                    {{ substr($attribute, 0, 20) }}
+                    @else
+                    N/A
+                    @endif
+                </td>
                 @endif
                 @endforeach
             </tr>
             @empty
             <tr class="text-center">
-                <td colspan="95">No Data Available</td>
+                <td colspan="{{ count($columnNames) }}">No Data Available</td>
             </tr>
             @endforelse
         </tbody>

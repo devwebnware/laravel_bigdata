@@ -8,7 +8,7 @@
 </div>
 <div class="card card-bordered mt-3 card-preview">
     <div class="p-5">
-        <table class="table">
+        <table class="table table-bordered">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">S. No.</th>
