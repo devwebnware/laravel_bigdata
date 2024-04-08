@@ -36,7 +36,7 @@
                             <label class="form-label">Select columns to export <span class="text-muted">(For all left blank)</span></label>
                             <select class="form-select" multiple="multiple" id="columns" data-placeholder="Select Columns" name="columnNames[]">
                                 @foreach($columnNames as $column)
-                                <option value="{{ $column }}">{{ucwords( $column )}} </option>
+                                <option value="{{ $column }}" @if($column === 'id' || $column === 'name') selected @endif>{{ucwords( $column )}} </option>
                                 @endforeach
                             </select>
                         </div>
