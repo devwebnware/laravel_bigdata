@@ -5,12 +5,6 @@
             <div class="nk-menu-trigger d-xl-none ml-n1">
                 <a href="javascript:void(0)" class="nk-nav-toggle nk-quick-nav-icon" data-target="sidebarMenu"><em class="icon ni ni-menu"></em></a>
             </div>
-            <div class="nk-header-brand d-xl-none" style="flex-shrink:1 !important;">
-                <a href="{{ route('dashboard') }}" class="logo-link">
-                    <img class="logo-dark logo-img" src="{{ asset('assets/img/ad-favicon.png') }}" srcset="{{ asset('assets/img/ad-favicon.png') }}" alt="logo">
-                    <img class="logo-light logo-img" src="{{ asset('assets/img/logo-loader.png') }}" srcset="{{ asset('assets/img/logo-loader.png') }}" alt="logo-dark">
-                </a>
-            </div><!-- .nk-header-brand -->
             <!-- .nk-header-news -->
             <div class="nk-header-tools p-0">
                 <ul class="nk-quick-nav">
@@ -71,7 +65,8 @@
     $(document).ready(function() {
         window.setTimeout(function() {
             $(".alert-dismissible").fadeTo(2000, 0).slideUp(2000, function() {});
+            console.log('header');
         });
-    }, 5000);
+    }, 10000);
 </script>
 @endpush
