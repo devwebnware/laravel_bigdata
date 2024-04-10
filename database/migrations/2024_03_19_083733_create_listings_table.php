@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('category_id')->default(1)->references('id')->on('categories');
-            $table->foreignId('created_by')->default(1)->references('id')->on('users');
             $table->timestamps();
         });
     }

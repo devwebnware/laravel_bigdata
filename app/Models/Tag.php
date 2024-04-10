@@ -13,7 +13,9 @@ class Tag extends Model
         'name',
         'bg_color',
         'color',
+        'created_by'
     ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');

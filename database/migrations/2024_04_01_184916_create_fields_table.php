@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('fields', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('created_by')->references('id')->on('users');
             $table->string('name');
             $table->string('type');
             $table->timestamps();

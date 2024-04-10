@@ -10,7 +10,9 @@ class Category extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'created_by'
     ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
