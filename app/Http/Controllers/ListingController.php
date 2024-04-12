@@ -34,7 +34,7 @@ class ListingController extends Controller
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
             $dropdownData = GeneralHelper::getDropdowns();
-            $listings = Listing::paginate(10);
+            $listings = Listing::with('listingTags')->paginate(10);
             return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'columnNames'));
         } else {
             return redirect()->route('dashboard')->with('error', 'User is not authorized for access.');

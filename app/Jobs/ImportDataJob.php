@@ -34,6 +34,8 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
 
         if ($listing) {
             foreach ($this->mappingData as $key => $value) {
+                // $value = database column name
+                // $key = csv file column name
                 switch ($key) {
                     case 'category_id':
                         if (gettype($row[$key]) === 'string') {
@@ -51,8 +53,13 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         if ($row[$key]) {
                             $tags = explode(",", $row[$key]);
                             foreach ($tags as $tag) {
-                                $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
-                                if ($tagModel) {
+                                $listedTag = $listing->listingTags->filter(function ($tag) use ($row, $key) {
+                                    return stripos($tag->name, $row[$key]) !== false;
+                                })->first();
+                                if($listedTag){
+                                    $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
+                                }
+                                if (!$listedTag && $tagModel) {
                                     $listingTag = new ListingTag();
                                     $listingTag->listing_id = $listing->id;
                                     $listingTag->tag_id = $tagModel->id;
@@ -86,7 +93,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         }
                         break;
                     case 'tag_id':
-                        if ($row[$key]) {
+                        if ($row[$key] !== '') {
                             $tags = explode(",", $row[$key]);
                             foreach ($tags as $tag) {
                                 $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
