@@ -2,8 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Models\Tag;
 use App\Models\Listing;
 use App\Models\Category;
+use App\Models\ListingTag;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -28,54 +30,85 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
 
     public function model(array $row)
     {
-        $listing = Listing::where('name', $row[$this->mappingData['name']])->first();
+        $listing = Listing::where('name', $row[$this->mappingData['name']])->with('listingTags')->first();
+
         if ($listing) {
             foreach ($this->mappingData as $key => $value) {
-                if ($value === 'category_id') {
-                    if (gettype($row[$key]) === 'string') {
-                        $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
-                    } else {
-                        $category = Category::find($row[$key]);
-                    }
-                    Log::info('Key and value', [
-                        'key' => $key,
-                        'value' => $value,
-                        'category' => $category
-                    ]);
-                    if ($category) {
+                switch ($key) {
+                    case 'category_id':
+                        if (gettype($row[$key]) === 'string') {
+                            $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
+                        } else {
+                            $category = Category::find($row[$key]);
+                        }
+                        if ($category) {
+                            $listing->update([
+                                $value => $category->id
+                            ]);
+                        }
+                        break;
+                    case 'tag_id':
+                        if ($row[$key]) {
+                            $tags = explode(",", $row[$key]);
+                            foreach ($tags as $tag) {
+                                $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
+                                if ($tagModel) {
+                                    $listingTag = new ListingTag();
+                                    $listingTag->listing_id = $listing->id;
+                                    $listingTag->tag_id = $tagModel->id;
+                                    $listingTag->save();
+                                }
+                            }
+                        }
+                        break;
+                    default:
                         $listing->update([
-                            $value => $category->id
+                            $value => $row[$key]
                         ]);
-                    }
-                } else {
-                    $listing->update([
-                        $value => $row[$key]
-                    ]);
+                        break;
                 }
             }
         } else {
             $listing = new Listing();
             foreach ($this->mappingData as $key => $value) {
-                if ($value === 'category_id') {
-                    if (gettype($row[$key]) === 'string') {
-                        $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
-                    } else {
-                        $category = Category::find($row[$key]);
-                    }
-                    Log::info('Key and value', [
-                        'key' => $key,
-                        'value' => $value,
-                        'category' => $category
-                    ]);
-                    if ($category) {
-                        $listing->category_id = $category->id;
-                    }
-                } else {
-                    $listing->$value = $row[$key];
+                // $value = database column name
+                // $key = csv file column name
+
+                switch ($key) {
+                    case 'category_id':
+                        if (gettype($row[$key]) === 'string') {
+                            $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
+                        } else {
+                            $category = Category::find($row[$key]);
+                        }
+                        if ($category) {
+                            $listing->category_id = $category->id;
+                        }
+                        break;
+                    case 'tag_id':
+                        if ($row[$key]) {
+                            $tags = explode(",", $row[$key]);
+                            foreach ($tags as $tag) {
+                                $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
+                                if ($tagModel) {
+                                    $listing->save();
+                                    $listingTag = new ListingTag();
+                                    $listingTag->listing_id = $listing->id;
+                                    $listingTag->tag_id = $tagModel->id;
+                                    $listingTag->save();
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        $listing->$value = $row[$key];
+                        $listing->save();
+                        break;
                 }
             }
-            $listing->save();
+            $listing->save(); // Moved outside the loop
         }
+
         return $listing;
     }
 
