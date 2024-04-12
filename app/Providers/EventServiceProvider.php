@@ -22,11 +22,8 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-        SendMail::class => [
-            SendMailFired::class,
-        ],
-        ActivityLog::class => [
-            ActivityLogNotification::class,
+        'App\Events\ImportJobStart' => [
+            'App\Listeners\ImportJobStartListener',
         ],
     ];
 
