@@ -29,7 +29,7 @@ class ListingController extends Controller
 
     public function index()
     {
-        if(auth()->user()->hasRole('admin')){
+        if (auth()->user()->hasRole('admin')) {
             $tags = ListingTag::all();
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
@@ -169,7 +169,7 @@ class ListingController extends Controller
             if ($file !== false) {
                 $headers = fgetcsv($file);
                 fclose($file);
-            }   
+            }
             return response()->json(['headers' => $headers, 'columnNames' => $columnNames]);
         }
     }

@@ -142,6 +142,7 @@
             <tr>
                 <th scope="col">#</th>
                 <th scope="col">Action</th>
+                <th scope="col">Tags</th>
                 @foreach($columnNames as $column)
                 @if($column !== 'id')
                 <th scope="col">{{ $column }}</th>
@@ -167,6 +168,9 @@
                             </ul>
                         </div>
                     </div>
+                </td>
+                <td>
+                    {{ $listing->listingTags }}
                 </td>
                 @foreach($listing->getAttributes() as $key => $attribute)
                 @if($key !== 'id')
