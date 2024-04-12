@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('export_import_logs', function (Blueprint $table) {
             $table->id();
-            $table->boolean('type');
             $table->foreignId('user_id')->references('id')->on('users');
+            $table->boolean('type');
             $table->timestamps();
         });
     }

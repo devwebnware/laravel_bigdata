@@ -22,6 +22,6 @@ class Listing extends Model
 
     public function listingTags()
     {
-        return $this->hasMany(ListingTag::class, 'listing_id', 'id');
+        return $this->belongsToMany(Tag::class, 'listing_tags', 'listing_id', 'tag_id');
     }
 }
