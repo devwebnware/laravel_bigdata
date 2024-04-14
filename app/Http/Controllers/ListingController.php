@@ -32,10 +32,11 @@ class ListingController extends Controller
         if (auth()->user()->hasRole('admin')) {
             $tags = ListingTag::all();
             $tableName = 'listings';
-            $columnNames = Schema::getColumnListing($tableName);
+            $dropdownColumnNames = Schema::getColumnListing($tableName);
+            $ColumnNames = $dropdownColumnNames;
             $dropdownData = GeneralHelper::getDropdowns();
-            $listings = Listing::with('listingTags')->paginate(10);
-            return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'columnNames'));
+            $listings = Listing::paginate(10);
+            return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'ColumnNames', 'dropdownColumnNames'));
         } else {
             return redirect()->route('dashboard')->with('error', 'User is not authorized for access.');
         };
@@ -177,30 +178,29 @@ class ListingController extends Controller
     public function filter(Request $request)
     {
         $query = Listing::query();
+        $tableName = 'listings';
+        $dropdownColumnNames = Schema::getColumnListing($tableName);
         if ($request->has('columnNames')) {
-            $columnNames = $request->columnNames;
+            $ColumnNames = $request->columnNames;
 
             $requiredColumns = ['name', 'id'];
             foreach ($requiredColumns as $columnName) {
                 // Check if column names has required fields
-                if (!in_array($columnName, $columnNames)) {
+                if (!in_array($columnName, $ColumnNames)) {
                     // if required columns not found then add them
-                    array_unshift($columnNames, $columnName);
+                    array_unshift($ColumnNames, $columnName);
                 }
             }
-        } else {
-            $tableName = 'listings';
-            $columnNames = Schema::getColumnListing($tableName);
         }
 
         $dropdownData = GeneralHelper::getDropdowns();
         $query = $this->applyFilters($query, $request->except('_token'));
 
-        $listings = $query->select($columnNames)->paginate(10);
+        $listings = $query->select($ColumnNames)->paginate(10);
         $request->session()->put('filter', $request->except('_token'));
-        $request->session()->put('columnNames', $columnNames);
+        $request->session()->put('columnNames', $ColumnNames);
 
-        return view('backend.listings.index', compact('listings', 'dropdownData', 'columnNames'));
+        return view('backend.listings.index', compact('listings', 'dropdownData', 'ColumnNames', 'dropdownColumnNames'));
     }
 
     public function exportFilter()
@@ -222,26 +222,33 @@ class ListingController extends Controller
                 switch ($key) {
                     case 'name':
                     case 'full_address':
-                    case 'city':
-                    case 'query':
-                    case 'type':
-                    case 'state':
-                    case 'country':
                         $query->where($key, 'like', '%' . $value . '%');
                         break;
-                    case 'category_id':
-                    case 'tag_id':
-                    case 'user_id':
+                    case 'cities':
+                        foreach ($value as $item) {
+                            $query->Where('city', $item);
+                        }
+                        break;
+                    case 'states':
+                        foreach ($value as $item) {
+                            $query->Where('state', $item);
+                        }
+                        break;
+                    case 'category_ids':
+                        foreach ($value as $category_id) {
+                            $query->Where('category_id', $category_id);
+                        }
+                        break;
+                    case 'tag_ids':
+                        $query->whereHas('listingTags', function ($query) use ($value) {
+                            $query->select('listing_id')
+                                ->whereIn('tag_id', $value)
+                                ->groupBy('listing_id')
+                                ->havingRaw('COUNT(DISTINCT tag_id) = ?', [count($value)]);
+                        });
+                        break;
                     case 'postal_code':
                         $query->where($key, $value);
-                        break;
-                    case 'start_date':
-                        $start = Carbon::parse($value);
-                        $query->whereDate('created_at', '>=', $start);
-                        break;
-                    case 'end_date':
-                        $end = Carbon::parse($value);
-                        $query->whereDate('created_at', '<=', $end);
                         break;
                     default:
                         break;
