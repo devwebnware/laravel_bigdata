@@ -52,18 +52,18 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                     case 'tag_id':
                         if ($row[$key]) {
                             $tags = explode(",", $row[$key]);
-                            foreach ($tags as $tag) {
-                                $listedTag = $listing->listingTags->filter(function ($tag) use ($row, $key) {
-                                    return stripos($tag->name, $row[$key]) !== false;
+                            foreach ($tags as $tagName) {
+                                $listedTag = $listing->listingTags->filter(function ($tag) use ($tagName) {
+                                    return stripos($tag->name, $tagName) !== false;
                                 })->first();
-                                if($listedTag){
-                                    $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
-                                }
-                                if (!$listedTag && $tagModel) {
-                                    $listingTag = new ListingTag();
-                                    $listingTag->listing_id = $listing->id;
-                                    $listingTag->tag_id = $tagModel->id;
-                                    $listingTag->save();
+                                if (!$listedTag) {
+                                    $tagModel = Tag::where('name', 'like', "%{$tagName}%")->first();
+                                    if ($tagModel) {
+                                        $listingTag = new ListingTag();
+                                        $listingTag->listing_id = $listing->id;
+                                        $listingTag->tag_id = $tagModel->id;
+                                        $listingTag->save();
+                                    }
                                 }
                             }
                         }
@@ -93,7 +93,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         }
                         break;
                     case 'tag_id':
-                        if ($row[$key] !== '') {
+                        if ($row[$key]) {
                             $tags = explode(",", $row[$key]);
                             foreach ($tags as $tag) {
                                 $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
@@ -113,7 +113,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         break;
                 }
             }
-            $listing->save(); // Moved outside the loop
+            $listing->save();
         }
 
         return $listing;
