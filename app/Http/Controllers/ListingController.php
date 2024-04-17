@@ -195,7 +195,7 @@ class ListingController extends Controller
 
         $dropdownData = GeneralHelper::getDropdowns();
         $query = $this->applyFilters($query, $request->except('_token'));
-
+        // dd($query->toSql());
         $listings = $query->select($ColumnNames)->paginate(10);
         $request->session()->put('filter', $request->except('_token'));
         $request->session()->put('columnNames', $ColumnNames);
@@ -249,6 +249,15 @@ class ListingController extends Controller
                         break;
                     case 'postal_code':
                         $query->where($key, $value);
+                        break;
+                    case 'phone':
+                    case 'site':
+
+                        if ($value == 'null') {
+                            $query->whereNull($key);
+                        } else {
+                            $query->whereNotNull($key);
+                        }
                         break;
                     default:
                         break;

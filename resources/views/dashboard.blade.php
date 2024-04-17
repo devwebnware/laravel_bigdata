@@ -138,6 +138,22 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Phone</label>
+                        <select class="form-select" id="phone" data-placeholder="Select Option" name='phone'>
+                            <option disabled selected>Select Option</option>
+                            <option value="null">Blank</option>
+                            <option value="NN">Not Blank</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">Site</label>
+                        <select class="form-select" id="site" data-placeholder="Select Option" name='site'>
+                            <option disabled selected>Select Option</option>
+                            <option value="null">Blank</option>
+                            <option value="NN">Not Blank</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="mt-2">
                     <button type="submit" class="btn btn-info">Filter Listings</button>

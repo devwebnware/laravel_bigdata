@@ -5,18 +5,18 @@
 <x-alert />
 <div class="d-flex flex-row">
     @if(Route::currentRouteName() == 'listings.index')
-    <a href="{{ route('listings.data.import')}}" class='btn btn-secondary mr-2'>Import</a>
-    <a href="{{ route('listings.data.handel.export')}}" class='btn btn-secondary mr-2'>Export</a>
-    <a href="{{ route('listings.create')}}" class='btn btn-info mr-auto text-decoration-none'>Add Listing</a>
+    <a href="{{ route('listings.data.import')}}" class='btn btn-secondary mr-2'>IMPORT</a>
+    <a href="{{ route('listings.data.handel.export')}}" class='btn btn-secondary mr-2'>EXPORT</a>
+    <a href="{{ route('listings.create')}}" class='btn btn-info mr-auto text-decoration-none'>ADD LISTING</a>
     @endif
     @if(Route::currentRouteName() == 'listings.filter')
     <form action="{{ route('listings.export.filtered') }}" method="POST">
         @csrf
-        <button type="submit" class="btn mr-2 btn-primary">Export Filtered Data</button>
+        <button type="submit" class="btn mr-2 btn-primary">EXPORT FILRERED DATA</button>
     </form>
     @endif
     <!-- Filter Modal trigger button -->
-    <button data-toggle="modal" class="btn btn-info" data-target="#filterModal"><em class="icon ni ni-filter"></em><span>Filter Records</span></button>
+    <button data-toggle="modal" class="btn btn-info" data-target="#filterModal"><em class="icon ni ni-filter"></em><span>FILTER RECORDS</span></button>
 </div>
 <!-- Start Filter Modal -->
 <div class="modal fade" id="filterModal" tabindex="-1" role="dialog" aria-labelledby="markPaid" aria-hidden="true">
@@ -122,6 +122,22 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Phone</label>
+                            <select class="form-select" id="phone" data-placeholder="Select Option" name='phone'>
+                                <option disabled selected>Select Option</option>
+                                <option value="null">Blank</option>
+                                <option value="NN">Not Blank</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Site</label>
+                            <select class="form-select" id="site" data-placeholder="Select Option" name='site'>
+                                <option disabled selected>Select Option</option>
+                                <option value="null">Blank</option>
+                                <option value="NN">Not Blank</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -141,11 +157,11 @@
         <thead class="thead-dark">
             <tr>
                 <th scope="col">#</th>
-                <th scope="col">Action</th>
-                <th scope="col">Tags</th>
+                <th scope="col">ACTION</th>
+                <th scope="col">TAGS</th>
                 @foreach($ColumnNames as $column)
                 @if($column !== 'id')
-                <th scope="col">{{ $column }}</th>
+                <th scope="col">{{ strtoupper($column) }}</th>
                 @endif
                 @endforeach
             </tr>
