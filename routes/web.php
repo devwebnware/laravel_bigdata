@@ -1,16 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FieldController;
+use App\Http\Controllers\ListingController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\ListingController;
-use App\Http\Controllers\TagController;
+use App\Http\Controllers\ExportDataGroupController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\FieldController;
 
 require __DIR__ . '/auth.php';
 
@@ -74,6 +75,16 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('import/data/status', 'getStatus')->name('import.data.status');
         Route::get('data/handel/export', 'handelExport')->name('data.handel.export');
         Route::post('data/handel/import', 'handelImport')->name('data.handel.import');
+    });
+
+    // Export Data Group
+    Route::controller(ExportDataGroupController::class)->prefix('listing/export/')->name('listing.export.')->group(function () {
+        Route::get('groups', 'index')->name('group.index');
+        Route::get('groups/create', 'create')->name('group.create');
+        Route::post('groups/store', 'store')->name('group.store');
+        Route::get('groups/{id}/edit', 'edit')->name('group.edit');
+        Route::patch('groups/{id}/update', 'update')->name('group.update');
+        Route::delete('groups/{id}/delete', 'destroy')->name('group.destroy');
     });
 
     // Custom Fields Operations
