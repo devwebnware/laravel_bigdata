@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('listing_tags', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('listing_id')->references('id')->on('listings')->onDelete('cascade');;
-            $table->foreignId('tag_id')->references('id')->on('tags')->onDelete('cascade');;
+            $table->foreignId('listing_id')->references('id')->on('listings')->onDelete('cascade');
+            $table->foreignId('tag_id')->references('id')->on('tags')->onDelete('cascade');
             $table->timestamps();
         });
     }
