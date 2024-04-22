@@ -1,5 +1,6 @@
 @extends('backend.layouts.main')
 @section('content')
+<x-alert />
 <div class="card card-bordered h-100">
     <div class="card-inner">
         <div class="card-head">
@@ -13,7 +14,7 @@
             </div>
             <div class="d-flex flex-direction-row">
                 <button type="submit" class="btn btn-primary" class="btn btn-success">Upload</button>
-                <div class="spinner-border ml-3 d-none" role="status">
+                <div class="spinner-border first-loader ml-3 d-none" role="status">
                     <span class="sr-only">Loading...</span>
                 </div>
             </div>
@@ -21,7 +22,7 @@
     </div>
 </div>
 <!-- Start Filter Modal -->
-<button data-toggle="modal" class="btn trigger-modal d-none btn-info" data-target="#importModal"><em class="icon ni ni-filter"></em></button>
+<button data-toggle="modal" class="btn trigger-modal d-none btn-info" data-target="#importModal"></button>
 <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
@@ -45,6 +46,9 @@
                 </div>
                 <div class="modal-footer">
                     <div class="mt-2">
+                        <div class="spinner-border second-loader ml-3 d-none" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
                         <a href="#" class="btn btn-secondery" data-dismiss="modal" aria-label="Close">
                             Close
                         </a>
@@ -55,6 +59,13 @@
         </div>
     </div>
 </div>
+<style>
+    .second-loader {
+        width: 1.6rem;
+        height: 1.6rem;
+        vertical-align: middle;
+    }
+</style>
 @push('custom-js')
 <script>
     $(document).ready(function() {
@@ -70,7 +81,7 @@
                 cache: false,
                 processData: false,
                 beforeSend: function() {
-                    $form.find('.spinner-border').removeClass('d-none');
+                    $form.find('.first-loader').removeClass('d-none');
                 },
                 success: function(data) {
                     let headers = data.headers;
@@ -78,16 +89,8 @@
                     let body = $("#headersMapBody");
                     body.empty();
                     let options = [];
-                    options.push('<option value="Default Option" selected disabled>Default Option</option>');
+                    options.push('<option disabled selected>Select an option</option>');
                     for (let i = 0; i < headers.length; i++) {
-                        let selectedOption = '';
-                        for (let j = 0; j < columnNames.length; j++) {
-                            if (columnNames[j] === headers[i]) {
-                                selectedOption = 'selected';
-                                break;
-                            }
-                        }
-
                         let optionElements = columnNames.map(columnName => {
                             let selected = columnName === headers[i] ? 'selected' : '';
                             return `<option value="${columnName}" ${selected}>${columnName}</option>`;
@@ -97,7 +100,8 @@
                             `<tr>
                                 <td scope="row" style="width: 30%; text-align: center">${headers[i]}</td>
                                 <td scope="row" style="width: 70%; text-align: center">
-                                    <select class="form-select form-control" style="cursor: pointer" name="headers[${headers[i]}]">
+                                    <select class="form-select db-column-list form-control" style="cursor: pointer" name="headers[${headers[i]}]">
+                                        ${options.join('')}
                                         ${optionElements.join('')}
                                     </select>
                                 </td>
@@ -107,10 +111,10 @@
                     $(".trigger-modal").trigger('click');
                 },
                 complete: function() {
-                    $form.find('.spinner-border').addClass('d-none');
+                    $form.find('.first-loader').addClass('d-none');
                 },
                 error: function(data) {
-                    $form.find('.spinner-border').addClass('d-none');
+                    $form.find('.first-loader').addClass('d-none');
                     console.log('Error:', data);
                 }
             });
@@ -123,6 +127,7 @@
             var file = fileInput.files[0];
             var formData = new FormData(this);
             formData.append('data', file);
+            let modalFooter = $(".modal-footer");
 
             $.ajax({
                 url: "{{ route('listings.data.handel.import') }}",
@@ -131,10 +136,17 @@
                 contentType: false,
                 cache: false,
                 processData: false,
+                beforeSend: function() {
+                    modalFooter.find('.second-loader').removeClass('d-none');
+                },
                 success: function(data) {
                     window.location.href = "{{ route('listings.data.import') }}";
                 },
+                complete: function() {
+                    modalFooter.find('.second-loader').addClass('d-none');
+                },
                 error: function(data) {
+                    modalFooter.find('.second-loader').addClass('d-none');
                     console.log('Error:', data);
                 }
             });

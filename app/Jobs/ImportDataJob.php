@@ -32,21 +32,23 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
     {
         $listing = Listing::where('name', $row[$this->mappingData['name']])->with('listingTags')->first();
 
-        if ($listing) {
+        if ($listing !== null) {
             foreach ($this->mappingData as $key => $value) {
                 // $value = database column name
                 // $key = csv file column name
                 switch ($key) {
                     case 'category_id':
-                        if (gettype($row[$key]) === 'string') {
-                            $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
-                        } else {
-                            $category = Category::find($row[$key]);
-                        }
-                        if ($category) {
-                            $listing->update([
-                                $value => $category->id
-                            ]);
+                        if ($row[$key]) {
+                            if (gettype($row[$key]) === 'string') {
+                                $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
+                            } else {
+                                $category = Category::find($row[$key]);
+                            }
+                            if ($category) {
+                                $listing->update([
+                                    $value => $category->id
+                                ]);
+                            }
                         }
                         break;
                     case 'tag_id':
@@ -69,6 +71,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         }
                         break;
                     default:
+                        // dd($row, $this->mappingData, $row[$this->mappingData['name']], $row[$key], $value);
                         $listing->update([
                             $value => $row[$key]
                         ]);
@@ -78,27 +81,30 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
         } else {
             $listing = new Listing();
             foreach ($this->mappingData as $key => $value) {
+
                 // $value = database column name
                 // $key = csv file column name
 
                 switch ($key) {
                     case 'category_id':
-                        if (gettype($row[$key]) === 'string') {
-                            $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
-                        } else {
-                            $category = Category::find($row[$key]);
-                        }
-                        if ($category) {
-                            $listing->category_id = $category->id;
+                        if ($row[$key]) {
+                            if (gettype($row[$key]) === 'string') {
+                                $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
+                            } else {
+                                $category = Category::find($row[$key]);
+                            }
+                            if ($category) {
+                                $listing->category_id = $category->id;
+                            }
                         }
                         break;
                     case 'tag_id':
-                        if ($row[$key]) {
+                        if ($row[$key] !== null) {
                             $tags = explode(",", $row[$key]);
+                            $listing->save();
                             foreach ($tags as $tag) {
                                 $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
                                 if ($tagModel) {
-                                    $listing->save();
                                     $listingTag = new ListingTag();
                                     $listingTag->listing_id = $listing->id;
                                     $listingTag->tag_id = $tagModel->id;

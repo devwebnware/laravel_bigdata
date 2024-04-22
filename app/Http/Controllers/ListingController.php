@@ -2,22 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\Tag;
-use App\Models\Job;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\ListingTag;
 use App\Jobs\ImportDataJob;
 use Illuminate\Http\Request;
-use App\Events\FileUploaded;
 use App\Helpers\GeneralHelper;
-use App\Events\ImportJobStart;
 use App\Models\ImportJobStatus;
 use App\Models\ExportImportLog;
 use App\Exports\ListingsExport;
-use App\Imports\ListingsImport;
-use Illuminate\Support\Facades\Auth;
+use App\Models\ExportDataGroup;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -31,41 +27,55 @@ class ListingController extends Controller
     {
         if (auth()->user()->hasRole('admin')) {
             $tags = ListingTag::all();
+            $columnGroup = ExportDataGroup::all();
+            foreach ($columnGroup as $column) {
+                $column->column_names = explode(',', $column->column_names);
+            }
             $tableName = 'listings';
             $dropdownColumnNames = Schema::getColumnListing($tableName);
             $ColumnNames = $dropdownColumnNames;
             $dropdownData = GeneralHelper::getDropdowns();
             $listings = Listing::paginate(10);
-            return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'ColumnNames', 'dropdownColumnNames'));
+            return view('backend.listings.index', compact('listings', 'tags', 'dropdownData', 'ColumnNames', 'dropdownColumnNames', 'columnGroup'));
         } else {
             return redirect()->route('dashboard')->with('error', 'User is not authorized for access.');
         };
     }
 
-    public function create()
-    {
-        $categories = Category::all();
-        $tags = Tag::all();
-        return view('backend.listings.create', compact('categories', 'tags'));
-    }
+    // public function create()
+    // {
+    //     $categories = Category::all();
+    //     $tags = Tag::all();
+    //     if($categories->isNotEmpty() && $tags->isNotEmpty()) {
+    //         return view('backend.listings.create', compact('categories', 'tags'));
+    //     } else {
+    //         Log::error('Error while fetching categories and tags. Check if they are not empty.');
+    //         return redirect()->back()->with('error', 'Error while fetching categories and tags. Check if they are not empty.');
+    //     }
+    // }
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|unique:categories,name|max:255',
-            'category_id' => 'required',
-            'tag_id' => 'required',
-        ]);
+    // public function store(Request $request)
+    // {
+    //     // dd($request->all());
+    //     $request->validate([
+    //         'name' => 'required|max:255',
+    //         'category_id' => 'required',
+    //         'tags' => 'required',
+    //     ]);
+    //     try {
+    //         $listing = new Listing();
+    //         $listing->name = $request->name;
+    //         $listing->category_id = $request->category_id;
+    //         $listing->tag_id = $request->tags;
+    //         $listing->created_by = null;
+    //         $listing->save();
 
-        $listing = new Listing();
-        $listing->name = $request->name;
-        $listing->category_id = $request->category_id;
-        $listing->tag_id = $request->tag_id;
-        $listing->created_by = auth()->user()->id;
-        $listing->save();
+    //         return redirect()->route('listings.index')->with('success', 'Listing created successfully.');
+    //     } catch (\Throwable $th) {
+    //         return redirect()->back()->with('error', $th->getMessage());
+    //     }
 
-        return redirect()->route('listings.index')->with('success', 'Listing created successfully.');
-    }
+    // }
 
     public function show($id)
     {
@@ -75,34 +85,42 @@ class ListingController extends Controller
 
     public function edit(string $id)
     {
+        $tableName = 'listings';
+        $columnNames = Schema::getColumnListing($tableName);
         $listing = Listing::find($id);
         $categories = Category::all();
         $tags = Tag::all();
-        return view('backend.listings.edit', compact('listing', 'categories', 'tags'));
+        return view('backend.listings.edit', compact('listing', 'categories', 'tags', 'columnNames'));
     }
 
-    public function update(Request $request, Listing $listing)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|unique:tags,name,' . $listing->id . '|max:255',
+            'name' => 'required|max:255',
             'category_id' => 'required',
             'tags' => 'required',
         ]);
-
-        $listing->name = $request->name;
-        $listing->category_id = $request->category_id;
-        $listing->created_by = auth()->user()->id;
-        $listing->update();
-        if ($request->tags) {
-            foreach ($request->tags as $tag) {
-                $listingTag = new ListingTag();
-                $listingTag->listing_id = $listing->id;
-                $listingTag->tag_id = $tag;
-                $listingTag->save();
+        try {
+            $listing = Listing::find($id);
+            $requestData = $request->all();
+            foreach ($requestData as $column => $data) {
+                if($column !== '_token' && $column !== '_method' && $column !== 'tags') {
+                    $listing->$column = $data;
+                }
             }
+            $listing->update();
+            if ($requestData['tags']) {
+                foreach ($requestData['tags'] as $tag) {
+                    $listingTag = new ListingTag();
+                    $listingTag->listing_id = $listing->id;
+                    $listingTag->tag_id = $tag;
+                    $listingTag->save();
+                }
+            }
+            return redirect()->route('listings.index')->with('success', 'Listing updated successfully.');
+        } catch (\Throwable $th) {
+            //throw $th;
         }
-
-        return redirect()->route('listings.index')->with('success', 'Listing updated successfully.');
     }
 
     public function destroy(Listing $listing)
@@ -180,6 +198,10 @@ class ListingController extends Controller
         $query = Listing::query();
         $tableName = 'listings';
         $dropdownColumnNames = Schema::getColumnListing($tableName);
+        $columnGroup = ExportDataGroup::all();
+        foreach ($columnGroup as $column) {
+            $column->column_names = explode(',', $column->column_names);
+        }
         if ($request->has('columnNames')) {
             $ColumnNames = $request->columnNames;
 
@@ -200,7 +222,7 @@ class ListingController extends Controller
         $request->session()->put('filter', $request->except('_token'));
         $request->session()->put('columnNames', $ColumnNames);
 
-        return view('backend.listings.index', compact('listings', 'dropdownData', 'ColumnNames', 'dropdownColumnNames'));
+        return view('backend.listings.index', compact('listings', 'dropdownData', 'ColumnNames', 'dropdownColumnNames', 'columnGroup'));
     }
 
     public function exportFilter()
