@@ -65,8 +65,7 @@
     $(document).ready(function() {
         window.setTimeout(function() {
             $(".alert-dismissible").fadeTo(2000, 0).slideUp(2000, function() {});
-            console.log('header');
-        });
-    }, 10000);
+        }, 4000); // Change alert duration according to your needs
+    });
 </script>
 @endpush

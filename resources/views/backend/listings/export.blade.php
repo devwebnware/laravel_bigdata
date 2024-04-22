@@ -1,5 +1,6 @@
 @extends('backend.layouts.main')
 @section('content')
+<x-alert />
 <div class="card card-bordered h-100">
     <div class="card-inner">
         <div class="card-head">
