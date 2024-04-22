@@ -33,6 +33,11 @@
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
+                        <a href="{{ route('listing.export.group.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-property-add"></em></span>
+                            <span class="nk-menu-text">Export Groups</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item has-sub">
                         <a href="{{ route('listings.import.data.status') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-download-cloud"></em></span>
                             <span class="nk-menu-text">Import Status</span>
                         </a>

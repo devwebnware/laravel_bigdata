@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('listing_tags', function (Blueprint $table) {
+        Schema::create('export_data_groups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('listing_id')->references('id')->on('listings')->onDelete('cascade');
-            $table->foreignId('tag_id')->references('id')->on('tags')->onDelete('cascade');
+            $table->string('group_name');
+            $table->text('column_names');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('listing_tags');
+        Schema::dropIfExists('export_data_groups');
     }
 };

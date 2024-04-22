@@ -7,32 +7,32 @@
                         <li class="nav-item nav-link pe-3" style="padding:0px !important"><i class="icon-phone pe-1" style="color:#13cad2;"></i><a href="tel:9529708616" target="_blank" class="p-0 m-0" style="background-color:#fff !important;">+91 95297 08616</a>
                         </li>
                         <li class="nav-item nav-link ms-4 d-flex align-items-center" style="padding:0px !important">
-                            <i class="icon-GL_message_1 pe-1 fw-bolder" style="color:#13cad2;"></i><a href="mailto:info@lancersglobal.com" target="_blank" class="p-0 m-0" style="background-color:#fff !important; ">info@lancersglobal.com</a>
+                            <i class="icon-GL_message_1 pe-1 fw-bolder" style="color:#13cad2;"></i><a href="mailto:info@demo.com" target="_blank" class="p-0 m-0" style="background-color:#fff !important; ">info@demo.com</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item ps-1 pe-1">
-                            <a href="https://twitter.com/lancersglobal" class="nav-link-icon" target="_blank">
+                            <a href="https://twitter.com/demo" class="nav-link-icon" target="_blank">
                                 <i class="icon-twitter"></i>
                             </a>
                         </li>
                         <li class="nav-item ps-1 pe-1">
-                            <a href="https://www.facebook.com/lancersglobal" class="nav-link-icon" target="_blank">
+                            <a href="https://www.facebook.com/demo" class="nav-link-icon" target="_blank">
                                 <i class="icon-facebook"></i>
                             </a>
                         </li>
                         <li class="nav-item ps-1 pe-1">
-                            <a href="https://www.linkedin.com/company/globallancers/" class="nav-link-icon" target="_blank">
+                            <a href="https://www.linkedin.com/company/demo/" class="nav-link-icon" target="_blank">
                                 <i class="icon-linkedin2"></i>
                             </a>
                         </li>
                         <li class="nav-item ps-1 pe-1">
-                            <a href="https://www.instagram.com/globallancers" class="nav-link-icon" target="_blank">
+                            <a href="https://www.instagram.com/demo" class="nav-link-icon" target="_blank">
                                 <i class="icon-instagram"></i>
                             </a>
                         </li>
                         <li class="nav-item ps-1 pe-1">
-                            <a href="https://www.youtube.com/lancersglobal" class="nav-link-icon" target="_blank">
+                            <a href="https://www.youtube.com/demo" class="nav-link-icon" target="_blank">
                                 <i class="icon-youtube"></i>
                             </a>
                         </li>

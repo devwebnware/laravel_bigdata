@@ -1,20 +1,17 @@
 @extends('backend.layouts.main')
 @section('content')
+<x-alert />
 <div class="card card-bordered h-100">
     <div class="card-inner">
         <div class="card-head">
-            <h5 class="card-title">Tag Info</h5>
+            <h5 class="card-title">Listing - {{$listing->name}}</h5>
         </div>
         <form class="max-w-sm mx-auto" method="POST" action="{{ route('listings.update', $listing->id) }}">
             @csrf
             @method('patch')
             <div class="row">
-                <div class="mb-3 col-md-12" style="margin-bottom: 10px;">
-                    <label for="name" style="margin-bottom: 10px;" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tag Name</label>
-                    <input type="text" id="name" name='name' value='{{$listing->name}}' class="form-control" placeholder="Enter category name" required />
-                </div>
                 <div class="mb-3 col-md-6">
-                    <label for="category" style="margin-bottom: 10px;" class="form-label">Category</label>
+                    <label for="category" style="margin-bottom: 10px;" class="form-label">CATEGORY</label>
                     <select class="form-select" name="category_id" id="category" aria-label="Default select example">
                         <option value='' selected>Open this select menu</option>
                         @foreach ($categories as $category)
@@ -23,7 +20,7 @@
                     </select>
                 </div>
                 <div class="mb-3 col-md-6" style="margin-bottom: 10px;">
-                    <div class="form-group"><label class="form-label" for="tag_id">Tags</label>
+                    <div class="form-group"><label class="form-label" for="tag_id">TAGS</label>
                         <select class="form-select" multiple="multiple" id="tags" data-placeholder="Select Tags" name="tags[]">
                             <option value="">Select Tags</option>
                             @foreach($tags as $tag)
@@ -32,6 +29,15 @@
                         </select>
                     </div>
                 </div>
+                @foreach($columnNames as $column)
+                @if($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at' && $column !== 'category_id')
+                <div class="mb-3 col-md-6" style="margin-bottom: 10px;">
+                    <div class="form-group"><label class="form-label" for="{{ $column }}">{{ strtoupper($column) }}</label>
+                        <input type="text" id="{{ $column }}" name='{{ $column }}' value='{{$listing->$column}}' class="form-control" placeholder="Enter {{ $column }}" />
+                    </div>
+                </div>
+                @endif
+                @endforeach
             </div>
             <button type="submit" class="btn btn-primary">Update</button>
         </form>

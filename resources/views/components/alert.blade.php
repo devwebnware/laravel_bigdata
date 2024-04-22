@@ -43,10 +43,3 @@
         </div>
     @endif
 </div>
-<script>
-    window.setTimeout(function() {
-        $(".alert").fadeTo(4000, 0).slideUp(1000, function() {
-            $('#alert').html('');
-        });
-    }, 8000);
-</script>
