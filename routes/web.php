@@ -56,10 +56,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::controller(ListingController::class)->name('listings.')->prefix('listings/')->group(function () {
         // Listing CRUD
         Route::get('view', 'index')->name('index');
-        Route::post('store', 'store')->name('store');
+        // Route::post('store', 'store')->name('store');
         Route::get('{id}/show', 'show')->name('show');
         Route::get('{id}/edit', 'edit')->name('edit');
-        Route::get('create', 'create')->name('create');
+        // Route::get('create', 'create')->name('create');
         Route::post('filter', 'filter')->name('filter');
         Route::patch('{id}/update', 'update')->name('update');
         Route::delete('{id}/delete', 'destroy')->name('destroy');
