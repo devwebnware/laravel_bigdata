@@ -39,6 +39,7 @@ class FieldController extends Controller
         $field = new Field;
         $field->name = $request->name;
         $field->type = $request->type;
+        $field->created_by = auth()->user()->id;
         if($field->save()) {
             Schema::table('listings', function (Blueprint $table) use ($request) {
                 $columnName = $request->name;
