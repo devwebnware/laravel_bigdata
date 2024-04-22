@@ -8,6 +8,7 @@ use App\Models\Listing;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Helpers\GeneralHelper;
+use App\Models\ExportDataGroup;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 
@@ -21,11 +22,14 @@ class DashboardController extends Controller
 			$categoriesCount = Category::count();
 			$tagsCount = Tag::count();
 			$listings = Listing::all();
+			$columnGroup = ExportDataGroup::all();
+			foreach ($columnGroup as $column) {
+				$column->column_names = explode(',', $column->column_names);
+			}
 
 			$dropdownData = GeneralHelper::getDropdowns();
 			$listingsCount = $listings->count();
-
-			return view('dashboard', compact('categoriesCount', 'tagsCount', 'listingsCount', 'dropdownData', 'columnNames'));
+			return view('dashboard', compact('categoriesCount', 'tagsCount', 'listingsCount', 'dropdownData', 'columnNames', 'columnGroup'));
 		} else {
 			return redirect()->route('login');
 		}

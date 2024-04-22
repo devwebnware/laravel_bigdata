@@ -49,6 +49,15 @@
             <div class="modal-body-md">
                 <div class="row">
                     <div class="col-md-12 mb-2">
+                        <label class="form-label">Select Column Group</label>
+                        <select class="form-select" id="column_group" data-placeholder="Select Columns Group">
+                            <option disabled selected>Select Group</option>
+                            @foreach($columnGroup as $group)
+                            <option value="{{ $group->group_name }}">{{ $group->group_name }} </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-12 mb-2">
                         <label class="form-label">Select columns to export <span class="text-muted">(For all left blank)</span></label>
                         <select class="form-select" multiple="multiple" id="columns" data-placeholder="Select Columns" name="columnNames[]">
                             @foreach($columnNames as $column)
@@ -165,4 +174,24 @@
 </div>
 @endsection
 @push('custom-js')
+<script>
+    let columnGroup = {!! json_encode($columnGroup) !!};
+    $(document).ready(function() {
+        $("#column_group").on("change", function(){
+            let group = $(this).val();
+            let columnNames =  '';
+            columnGroup.forEach(function(column) {
+                if(column.group_name === group) {
+                    columnNames = column.column_names;
+                }
+            })
+            let options = `<option disable>Select Columns</option><option value="id">id</option><option value="name">name</option>`;
+            Object.keys(columnNames).forEach(key => {
+                options += `<option value="${columnNames[key]}" selected>${columnNames[key]}</option>`;
+            });
+            $('#columns').empty();
+            $('#columns').html(options);
+        })
+    });
+</script>
 @endpush
