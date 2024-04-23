@@ -71,7 +71,6 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         }
                         break;
                     default:
-                        // dd($row, $this->mappingData, $row[$this->mappingData['name']], $row[$key], $value);
                         $listing->update([
                             $value => $row[$key]
                         ]);
