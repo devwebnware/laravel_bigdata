@@ -13,6 +13,7 @@ use App\Jobs\ImportDataJob;
 use Illuminate\Http\Request;
 use App\Helpers\GeneralHelper;
 use App\Models\ImportJobStatus;
+use App\Imports\ListingsImport;
 use App\Models\ExportImportLog;
 use App\Exports\ListingsExport;
 use App\Models\ExportDataGroup;
@@ -182,31 +183,20 @@ class ListingController extends Controller
     {
         if ($request->filled('headers')) {
             // Start: CSV file data validation before database operations
-            // try {
-            //     $import = new ListingsImport($request['headers']);
-            //     Excel::import($import, $request->file('data'));
-            //     $log = new ExportImportLog();
-            //     $log->user_id = auth()->user()->id;
-            //     $log->type = 0;
-            //     $log->save();
-            // } catch (\Exception $e) {
-            //     return back()->with('error', $e->getMessage());
-            // }
-            // End
-            // if ($request->hasFile('data')) {
-            //     $fileName = $request->file('data')->getClientOriginalName();
-            // }
-            // $fileData = [
-            //     'file_name'
-            // ];
-            // $jobStatus = new ImportJobStatus();
-            // $jobStatus->file_name = $request->file('data')->getClientOriginalName();
-            // $jobStatus->save();
-            // $jobStatusId = $jobStatus->id;
+            try {
+                $import = new ListingsImport($request['headers']);
+                Excel::import($import, $request->file('data'));
+                $log = new ExportImportLog();
+                $log->user_id = auth()->user()->id;
+                $log->type = 0;
+                $log->save();
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()]);
+            }
             $import = new ImportDataJob($request['headers']);
             Excel::queueImport($import, $request->file('data'));
             $this->exportImportLogs(0);
-            return redirect()->route('listings.data.import');
+            return redirect()->route('listings.index');
         } else {
             // Get columns names from listings table
             $tableName = 'listings';

@@ -21,6 +21,8 @@
         </form>
     </div>
 </div>
+<div class="csvErrors mt-3 d-none p-4 card-bordered card">
+</div>
 <!-- Start Filter Modal -->
 <button data-toggle="modal" class="btn trigger-modal d-none btn-info" data-target="#importModal"></button>
 <div class="modal fade" id="importModal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -49,7 +51,7 @@
                         <div class="spinner-border second-loader ml-3 d-none" role="status">
                             <span class="sr-only">Loading...</span>
                         </div>
-                        <a href="#" class="btn btn-secondery" data-dismiss="modal" aria-label="Close">
+                        <a href="#" class="btn close-btn btn-secondery" data-dismiss="modal" aria-label="Close">
                             Close
                         </a>
                         <button type="submit" class="btn btn-info">Import</button>
@@ -140,7 +142,17 @@
                     modalFooter.find('.second-loader').removeClass('d-none');
                 },
                 success: function(data) {
-                    window.location.href = "{{ route('listings.data.import') }}";
+                    if (data) {
+                        console.log(data.error);
+                        let errors = data.error.split("\n");
+                        errors.forEach(function(error) {
+                            $(".csvErrors").append(`<p><strong>${error}</strong></p>`); 
+                        });
+                        $(".close-btn").trigger('click');
+                        $(".csvErrors").removeClass('d-none');
+                    } else {
+                        window.location.href = "{{ route('listings.data.import') }}";
+                    }
                 },
                 complete: function() {
                     modalFooter.find('.second-loader').addClass('d-none');
