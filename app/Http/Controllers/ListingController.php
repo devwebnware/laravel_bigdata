@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Tag;
+use App\Models\Job;
 use App\Models\Listing;
 use App\Models\Category;
+use App\Models\FailedJob;
 use App\Models\ListingTag;
 use App\Jobs\ImportDataJob;
 use Illuminate\Http\Request;
@@ -17,6 +20,8 @@ use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 
 class ListingController extends Controller
@@ -56,7 +61,6 @@ class ListingController extends Controller
 
     // public function store(Request $request)
     // {
-    //     // dd($request->all());
     //     $request->validate([
     //         'name' => 'required|max:255',
     //         'category_id' => 'required',
@@ -79,18 +83,42 @@ class ListingController extends Controller
 
     public function show($id)
     {
-        $listing = Listing::find($id);
-        return view('backend.listings.show', compact('listing'));
+        try {
+            $listing = Listing::findOrFail($id);
+            return view('backend.listings.show', compact('listing'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('listings.index')->with('error', 'No record found with id: ' . $id . ' (' . $e->getMessage() . ')');
+        } catch (\Throwable $th) {
+            return redirect()->route('listings.index')->with('error', $th->getMessage());
+        }
     }
 
     public function edit(string $id)
     {
-        $tableName = 'listings';
-        $columnNames = Schema::getColumnListing($tableName);
-        $listing = Listing::find($id);
-        $categories = Category::all();
-        $tags = Tag::all();
-        return view('backend.listings.edit', compact('listing', 'categories', 'tags', 'columnNames'));
+        try {
+            $tableName = 'listings';
+            $columnNames = Schema::getColumnListing($tableName);
+            $listing = Listing::find($id);
+            $categories = Category::all();
+            $tags = Tag::all();
+            if (!$columnNames) {
+                return redirect()->route('listings.index')->with('error', "Not able to get column's name.");
+            }
+            if (!$listing) {
+                return redirect()->route('listings.index')->with('error', "Not able to get the listing details.");
+            }
+            if ($categories->isEmpty()) {
+                return redirect()->route('listings.index')->with('error', "Not able to get the categories.");
+            }
+            if ($tags->isEmpty()) {
+                return redirect()->route('listings.index')->with('error', 'Not able to get the tags.');
+            }
+            return view('backend.listings.edit', compact('listing', 'categories', 'tags', 'columnNames'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('listings.index')->with('error', $e->getMessage());
+        } catch (\Throwable $th) {
+            return redirect()->route('listings.index')->with('error', $th->getMessage());
+        }
     }
 
     public function update(Request $request, $id)
@@ -104,7 +132,7 @@ class ListingController extends Controller
             $listing = Listing::find($id);
             $requestData = $request->all();
             foreach ($requestData as $column => $data) {
-                if($column !== '_token' && $column !== '_method' && $column !== 'tags') {
+                if ($column !== '_token' && $column !== '_method' && $column !== 'tags') {
                     $listing->$column = $data;
                 }
             }
@@ -171,10 +199,10 @@ class ListingController extends Controller
             // $fileData = [
             //     'file_name'
             // ];
-            $jobStatus = new ImportJobStatus();
-            $jobStatus->file_name = $request->file('data')->getClientOriginalName();
-            $jobStatus->save();
-            $jobStatusId = $jobStatus->id;
+            // $jobStatus = new ImportJobStatus();
+            // $jobStatus->file_name = $request->file('data')->getClientOriginalName();
+            // $jobStatus->save();
+            // $jobStatusId = $jobStatus->id;
             $import = new ImportDataJob($request['headers']);
             Excel::queueImport($import, $request->file('data'));
             $this->exportImportLogs(0);
@@ -217,7 +245,6 @@ class ListingController extends Controller
 
         $dropdownData = GeneralHelper::getDropdowns();
         $query = $this->applyFilters($query, $request->except('_token'));
-        // dd($query->toSql());
         $listings = $query->select($ColumnNames)->paginate(10);
         $request->session()->put('filter', $request->except('_token'));
         $request->session()->put('columnNames', $ColumnNames);
@@ -299,7 +326,13 @@ class ListingController extends Controller
 
     public function getStatus()
     {
-        return view('backend.listings.status');
+        $jobs = Job::all();
+        $failedJobs = FailedJob::all();
+        foreach($jobs as $job) {
+            $job->available_at = Carbon::parse($job->available_at)->format('d-m-Y');
+            $job->created_at = Carbon::parse($job->created_at)->format('d-m-Y');
+        }
+        return view('backend.listings.status', compact('jobs', 'failedJobs'));
     }
 
     private function exportImportLogs($type)
