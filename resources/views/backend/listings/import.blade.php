@@ -1,25 +1,29 @@
 @extends('backend.layouts.main')
 @section('content')
 <x-alert />
-<div class="card card-bordered h-100">
-    <div class="card-inner">
-        <div class="card-head">
-            <h5 class="card-title">Import Info</h5>
-        </div>
-        <form id="importFileForm" enctype="multipart/form-data">
-            @csrf
-            <div class="mb-3">
-                <label for="name">Select file</label>
-                <input type="file" id="file" name='data' />
-            </div>
-            <div class="d-flex flex-direction-row">
-                <button type="submit" class="btn btn-primary" class="btn btn-success">Upload</button>
-                <div class="spinner-border first-loader ml-3 d-none" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-        </form>
+<div class="d-flex flex-row justify-content-between">
+    <div>
+        <h4>Import Listings</h4>
     </div>
+    <div>
+        <a href="{{ route('listings.index') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+<div class="card card-bordered table-responsive mt-3 p-5 card-preview">
+    <form id="importFileForm" enctype="multipart/form-data">
+        @csrf
+        <div class="mb-3">
+            <label for="name">Select file</label>
+            <input type="file" id="file" name='data' />
+        </div>
+        <div class="d-flex flex-direction-row">
+            <button type="submit" class="btn btn-primary" class="btn btn-sm btn-success">UPLOAD</button>
+            <a href="{{ route('listings.index') }}" class="btn ml-2 btn-sm btn-secondary">CANCEL</a>
+            <div class="spinner-border first-loader ml-3 d-none" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </form>
 </div>
 <div class="csvErrors mt-3 d-none p-4 card-bordered card">
 </div>
@@ -41,6 +45,7 @@
                         <thead class="thead-dark">
                             <th scope="col" class="text-center">File Column</th>
                             <th scope="col" class="text-center">Database Column</th>
+                            <th scope="col" class="text-center">Required</th>
                         </thead>
                         <tbody id="headersMapBody">
                         </tbody>
@@ -107,6 +112,7 @@
                                         ${optionElements.join('')}
                                     </select>
                                 </td>
+                                <td scope="row" style='text-align:center'><input type='checkbox' class="form-check-input" name='requiredField' id='requiredField'/></td>
                             </tr>`
                         );
                     }
@@ -146,7 +152,7 @@
                         console.log(data.error);
                         let errors = data.error.split("\n");
                         errors.forEach(function(error) {
-                            $(".csvErrors").append(`<p><strong>${error}</strong></p>`); 
+                            $(".csvErrors").append(`<p><strong>${error}</strong></p>`);
                         });
                         $(".close-btn").trigger('click');
                         $(".csvErrors").removeClass('d-none');
