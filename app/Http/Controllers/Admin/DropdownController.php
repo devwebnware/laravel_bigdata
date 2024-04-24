@@ -82,6 +82,6 @@ class DropdownController extends Controller
     public function toggleStatus(Request $request)
     {
         $dropdown = Dropdown::find($request->id)->update(['status' => $request->status]);
-        return response()->json(['success' => 'Status changed successfully.']);
+        return response()->json(['message' => 'Status changed successfully.']);
     }
 }
