@@ -112,7 +112,7 @@
                                         ${optionElements.join('')}
                                     </select>
                                 </td>
-                                <td scope="row" style='text-align:center'><input type='checkbox' class="form-check-input" name='requiredField' id='requiredField'/></td>
+                                <td scope="row" style='text-align:center'><input type='checkbox' class="form-check-input" name='requiredFields[${headers[i]}]' id='requiredField'/></td>
                             </tr>`
                         );
                     }
@@ -149,8 +149,8 @@
                 },
                 success: function(data) {
                     if (data) {
-                        console.log(data.error);
                         let errors = data.error.split("\n");
+                        $(".csvErrors").empty();
                         errors.forEach(function(error) {
                             $(".csvErrors").append(`<p><strong>${error}</strong></p>`);
                         });

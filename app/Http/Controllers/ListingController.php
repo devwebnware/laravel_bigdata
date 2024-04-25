@@ -138,13 +138,13 @@ class ListingController extends Controller
         }
 
         $dropdownData = GeneralHelper::getDropdowns();
-        if(!$columnNames) {
+        if (!$columnNames) {
             return redirect()->back()->with('error', 'Not able to fetch the column names.');
         }
-        if($columnGroup->isNotEmpty()){
+        if ($columnGroup->isNotEmpty()) {
             return redirect()->back()->with('error', 'Not able to fetch the column groups.');
         }
-        if(!$dropdownData){
+        if (!$dropdownData) {
             return redirect()->back()->with('error', 'Not able to fetch the general dropdown data.');
         }
         return view('backend.listings.export', compact('dropdownData', 'columnGroup', 'columnNames'));
@@ -153,7 +153,7 @@ class ListingController extends Controller
     public function handelExport()
     {
         $listings = Listing::all();
-        if($listings->isEmpty()) {
+        if ($listings->isEmpty()) {
             return redirect()->back()->with('error', 'Not able to fetch the listings.');
         }
         $this->exportImportLogs(1);
@@ -169,8 +169,12 @@ class ListingController extends Controller
     {
         if ($request->filled('headers')) {
             // CSV file data validation before database operations
+            $requiredFields = [];
+            if ($request->filled('requiredFields')) {
+                $requiredFields = array_keys($request->requiredFields);
+            }
             try {
-                $import = new ListingsImport($request['headers']);
+                $import = new ListingsImport($request['headers'], $requiredFields);
                 Excel::import($import, $request->file('data'));
             } catch (\Exception $e) {
                 return response()->json(['error' => $e->getMessage()]);
@@ -293,7 +297,7 @@ class ListingController extends Controller
     public function importExportLogs()
     {
         $logs = ExportImportLog::all();
-        if(!$logs) {
+        if (!$logs) {
             return redirect()->back()->with('error', 'Not able to fetch the import export logs.');
         }
         return view('backend.log.index', compact('logs'));
