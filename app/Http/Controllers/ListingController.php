@@ -117,15 +117,14 @@ class ListingController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Listing $listing)
     {
         try {
-            $listing = Listing::find($id);
             $listing->delete();
+            return redirect()->route('listings.index')->with('message', 'Listing deleted successfully.');
         } catch (\Throwable $th) {
             return redirect()->route('listings.index')->with('error', 'Not able to delete the listing.');
         }
-        return redirect()->route('listings.index')->with('message', 'Listing deleted successfully.');
     }
 
     public function export()

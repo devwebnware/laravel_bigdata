@@ -188,7 +188,7 @@
                         <div class="dropdown-menu dropdown-menu-right">
                             <ul class="link-list-opt">
                                 <li><a href="{{ route('listings.edit', ['id' => $listing->id]) }}"><em style="font-size: 20px;" class="icon ni ni-edit"></em>Edit</a></li>
-                                <li><a href="#" onclick="deleteRequest('{{$listing->name}}','{{$listing->id}}')"><em class="icon ni ni-trash"></em>Delete</a></li>
+                                <li><a href="#" onclick='deleteRequest("{{$listing->name}}","{{$listing->id}}")'><em class="icon ni ni-trash"></em>Delete</a></li>
                                 <li><a href="{{ route('listings.show', ['id' => $listing->id]) }}"><em class="icon ni ni-eye"></em>Show</a></li>
                             </ul>
                         </div>
@@ -235,10 +235,10 @@
 @push('custom-js')
 <script>
     // Form submittion for listing delete
-    function deleteRequest(name, id) {
+    function deleteRequest(name, listing) {
         event.preventDefault();
         if (confirm('Do you really want to delete ' + '"' + name + '"' + " listing ?")) {
-            $('#delete_form').attr('action', `/listings/${id}/delete`);
+            $('#delete_form').attr('action', `/listings/${listing}/delete`);
             $('#delete_form').submit();
         }
     }
