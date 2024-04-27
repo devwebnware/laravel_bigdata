@@ -167,7 +167,8 @@ class ListingController extends Controller
     public function handelImport(Request $request)
     {
         if ($request->filled('headers')) {
-            $import = new ImportDataJob($request['headers']);
+            $headers = $request['headers'];
+            $import = new ImportDataJob($headers);
             Excel::queueImport($import, $request->file('data'));
             $this->exportImportLogs(0);
             return response()->json('success');
@@ -175,6 +176,7 @@ class ListingController extends Controller
             // Get columns names from listings table
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
+            array_push($columnNames, 'tag_id');
             // Get columns names from csv file
             $file = fopen($request->file('data'), 'r');
             if ($file !== false) {
