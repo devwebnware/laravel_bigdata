@@ -203,8 +203,10 @@
                     No tags assigned
                     @endforelse
                 </td>
+                <td> {{ $listing->category->name}}
+                </td>
                 @foreach($listing->getAttributes() as $key => $attribute)
-                @if($key !== 'id')
+                @if($key !== 'id' && $key !== 'category_id')
                 <td scope="row">
                     @if($attribute)
                     {{ substr($attribute, 0, 20) }}
