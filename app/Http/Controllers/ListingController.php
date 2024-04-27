@@ -2,21 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Tag;
+use App\Models\Job;
 use App\Models\Listing;
 use App\Models\Category;
+use App\Models\FailedJob;
 use App\Models\ListingTag;
 use App\Jobs\ImportDataJob;
 use Illuminate\Http\Request;
 use App\Helpers\GeneralHelper;
 use App\Models\ImportJobStatus;
+use App\Imports\ListingsImport;
 use App\Models\ExportImportLog;
 use App\Exports\ListingsExport;
 use App\Models\ExportDataGroup;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 
 class ListingController extends Controller
@@ -42,55 +49,42 @@ class ListingController extends Controller
         };
     }
 
-    // public function create()
-    // {
-    //     $categories = Category::all();
-    //     $tags = Tag::all();
-    //     if($categories->isNotEmpty() && $tags->isNotEmpty()) {
-    //         return view('backend.listings.create', compact('categories', 'tags'));
-    //     } else {
-    //         Log::error('Error while fetching categories and tags. Check if they are not empty.');
-    //         return redirect()->back()->with('error', 'Error while fetching categories and tags. Check if they are not empty.');
-    //     }
-    // }
-
-    // public function store(Request $request)
-    // {
-    //     // dd($request->all());
-    //     $request->validate([
-    //         'name' => 'required|max:255',
-    //         'category_id' => 'required',
-    //         'tags' => 'required',
-    //     ]);
-    //     try {
-    //         $listing = new Listing();
-    //         $listing->name = $request->name;
-    //         $listing->category_id = $request->category_id;
-    //         $listing->tag_id = $request->tags;
-    //         $listing->created_by = null;
-    //         $listing->save();
-
-    //         return redirect()->route('listings.index')->with('success', 'Listing created successfully.');
-    //     } catch (\Throwable $th) {
-    //         return redirect()->back()->with('error', $th->getMessage());
-    //     }
-
-    // }
-
     public function show($id)
     {
-        $listing = Listing::find($id);
-        return view('backend.listings.show', compact('listing'));
+        try {
+            $listing = Listing::findOrFail($id);
+            return view('backend.listings.show', compact('listing'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('listings.index')->with('error', 'No record found with id: ' . $id . ' (' . $e->getMessage() . ')');
+        } catch (\Throwable $th) {
+            return redirect()->route('listings.index')->with('error', $th->getMessage());
+        }
     }
 
     public function edit(string $id)
     {
-        $tableName = 'listings';
-        $columnNames = Schema::getColumnListing($tableName);
-        $listing = Listing::find($id);
-        $categories = Category::all();
-        $tags = Tag::all();
-        return view('backend.listings.edit', compact('listing', 'categories', 'tags', 'columnNames'));
+        try {
+            $tableName = 'listings';
+            $columnNames = Schema::getColumnListing($tableName);
+            $listing = Listing::find($id);
+            $categories = Category::all();
+            $tags = Tag::all();
+            if (!$columnNames) {
+                return redirect()->route('listings.index')->with('error', "Not able to get column's name.");
+            }
+            if (!$listing) {
+                return redirect()->route('listings.index')->with('error', "Not able to get the listing details.");
+            }
+            if ($categories->isEmpty()) {
+                return redirect()->route('listings.index')->with('error', "Not able to get the categories.");
+            }
+            if ($tags->isEmpty()) {
+                return redirect()->route('listings.index')->with('error', 'Not able to get the tags.');
+            }
+            return view('backend.listings.edit', compact('listing', 'categories', 'tags', 'columnNames'));
+        } catch (\Throwable $th) {
+            return redirect()->route('listings.index')->with('error', $th->getMessage());
+        }
     }
 
     public function update(Request $request, $id)
@@ -104,7 +98,7 @@ class ListingController extends Controller
             $listing = Listing::find($id);
             $requestData = $request->all();
             foreach ($requestData as $column => $data) {
-                if($column !== '_token' && $column !== '_method' && $column !== 'tags') {
+                if ($column !== '_token' && $column !== '_method' && $column !== 'tags') {
                     $listing->$column = $data;
                 }
             }
@@ -117,30 +111,51 @@ class ListingController extends Controller
                     $listingTag->save();
                 }
             }
-            return redirect()->route('listings.index')->with('success', 'Listing updated successfully.');
+            return redirect()->route('listings.index')->with('message', 'Listing updated successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            return redirect()->route('listings.edit')->with('error', 'Not able to update listing.');
         }
     }
 
-    public function destroy(Listing $listing)
+    public function destroy($id)
     {
-        $listing->delete();
-
-        return redirect()->route('listings.index')->with('success', 'Listing deleted successfully.');
+        try {
+            $listing = Listing::find($id);
+            $listing->delete();
+        } catch (\Throwable $th) {
+            return redirect()->route('listings.index')->with('error', 'Not able to delete the listing.');
+        }
+        return redirect()->route('listings.index')->with('message', 'Listing deleted successfully.');
     }
 
     public function export()
     {
         $tableName = 'listings';
         $columnNames = Schema::getColumnListing($tableName);
+        $columnGroup = ExportDataGroup::all();
+        foreach ($columnGroup as $column) {
+            $column->column_names = explode(',', $column->column_names);
+        }
+
         $dropdownData = GeneralHelper::getDropdowns();
-        return view('backend.listings.export', compact('dropdownData', 'columnNames'));
+        if (!$columnNames) {
+            return redirect()->back()->with('error', 'Not able to fetch the column names.');
+        }
+        if ($columnGroup->isNotEmpty()) {
+            return redirect()->back()->with('error', 'Not able to fetch the column groups.');
+        }
+        if (!$dropdownData) {
+            return redirect()->back()->with('error', 'Not able to fetch the general dropdown data.');
+        }
+        return view('backend.listings.export', compact('dropdownData', 'columnGroup', 'columnNames'));
     }
 
     public function handelExport()
     {
         $listings = Listing::all();
+        if ($listings->isEmpty()) {
+            return redirect()->back()->with('error', 'Not able to fetch the listings.');
+        }
         $this->exportImportLogs(1);
         return Excel::download(new ListingsExport($listings), 'listings.csv');
     }
@@ -153,32 +168,21 @@ class ListingController extends Controller
     public function handelImport(Request $request)
     {
         if ($request->filled('headers')) {
-            // Start: CSV file data validation before database operations
-            // try {
-            //     $import = new ListingsImport($request['headers']);
-            //     Excel::import($import, $request->file('data'));
-            //     $log = new ExportImportLog();
-            //     $log->user_id = auth()->user()->id;
-            //     $log->type = 0;
-            //     $log->save();
-            // } catch (\Exception $e) {
-            //     return back()->with('error', $e->getMessage());
-            // }
-            // End
-            // if ($request->hasFile('data')) {
-            //     $fileName = $request->file('data')->getClientOriginalName();
-            // }
-            // $fileData = [
-            //     'file_name'
-            // ];
-            $jobStatus = new ImportJobStatus();
-            $jobStatus->file_name = $request->file('data')->getClientOriginalName();
-            $jobStatus->save();
-            $jobStatusId = $jobStatus->id;
+            // CSV file data validation before database operations
+            $requiredFields = [];
+            if ($request->filled('requiredFields')) {
+                $requiredFields = array_keys($request->requiredFields);
+            }
+            try {
+                $import = new ListingsImport($request['headers'], $requiredFields);
+                Excel::import($import, $request->file('data'));
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()]);
+            }
             $import = new ImportDataJob($request['headers']);
             Excel::queueImport($import, $request->file('data'));
             $this->exportImportLogs(0);
-            return redirect()->route('listings.data.import');
+            return redirect()->route('listings.index');
         } else {
             // Get columns names from listings table
             $tableName = 'listings';
@@ -217,7 +221,6 @@ class ListingController extends Controller
 
         $dropdownData = GeneralHelper::getDropdowns();
         $query = $this->applyFilters($query, $request->except('_token'));
-        // dd($query->toSql());
         $listings = $query->select($ColumnNames)->paginate(10);
         $request->session()->put('filter', $request->except('_token'));
         $request->session()->put('columnNames', $ColumnNames);
@@ -294,12 +297,21 @@ class ListingController extends Controller
     public function importExportLogs()
     {
         $logs = ExportImportLog::all();
+        if (!$logs) {
+            return redirect()->back()->with('error', 'Not able to fetch the import export logs.');
+        }
         return view('backend.log.index', compact('logs'));
     }
 
     public function getStatus()
     {
-        return view('backend.listings.status');
+        $jobs = Job::all();
+        $failedJobs = FailedJob::all();
+        foreach ($jobs as $job) {
+            $job->available_at = Carbon::parse($job->available_at)->format('d-m-Y');
+            $job->created_at = Carbon::parse($job->created_at)->format('d-m-Y');
+        }
+        return view('backend.listings.status', compact('jobs', 'failedJobs'));
     }
 
     private function exportImportLogs($type)

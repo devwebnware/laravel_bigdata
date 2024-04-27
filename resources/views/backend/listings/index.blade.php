@@ -238,7 +238,7 @@
     function deleteRequest(name, id) {
         event.preventDefault();
         if (confirm('Do you really want to delete ' + '"' + name + '"' + " listing ?")) {
-            $('#delete_form').attr('action', `/listings/${id}`);
+            $('#delete_form').attr('action', `/listings/${id}/delete`);
             $('#delete_form').submit();
         }
     }

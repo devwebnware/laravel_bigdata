@@ -1,35 +1,38 @@
 @extends('backend.layouts.main')
 @section('content')
 <x-alert />
-<div class="card card-bordered h-100">
-    <div class="card-inner">
-        <div class="card-head">
-            <h5 class="card-title">Tag Info</h5>
-        </div>
-        <form action="{{ route('tags.store') }}" method="POST">
-            @csrf
-            <div class="row">
-                <div class="form-group col-md-6">
-                    <label class="form-label" for="full-name">Tag Name</label>
-                    <div class="form-control-wrap">
-                        <input type="text" class="form-control" id="name" name='name'>
-                    </div>
-                </div>
-                <div class="form-group col-md-2">
-                    <label class="form-label" for="full-name">Background Color</label>
-                    <div class="form-control-wrap">
-                        <input type="color" class="form-control" id="bg-color" name='bg_color'>
-                    </div>
-                </div>
-                <div class="form-group col-md-2">
-                    <label class="form-label" for="full-name">Text Color</label>
-                    <div class="form-control-wrap">
-                        <input type="color" class="form-control" id="color" name='color'>
-                    </div>
+<div class="d-flex flex-row justify-content-between">
+    <div>
+        <h4>Create Tag</h4>
+    </div>
+    <div>
+        <a href="{{ route('tags.index') }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+<div class="card card-bordered table-responsive mt-3 p-5 card-preview">
+    <form action="{{ route('tags.store') }}" method="POST">
+        @csrf
+        <div class="row">
+            <div class="form-group col-md-6">
+                <label class="form-label" for="full-name"> Name <span style="color: red;">*</span></label>
+                <div class="form-control-wrap">
+                    <input type="text" class="form-control" id="name" name='name' required>
                 </div>
             </div>
-            <div class="form-group"><button type="submit" class="btn btn-lg btn-primary">Save Informations</button></div>
-        </form>
-    </div>
+            <div class="form-group col-md-2">
+                <label class="form-label" for="full-name"> Background Color <span style="color: red;">*</span></label>
+                <div class="form-control-wrap">
+                    <input type="color" class="form-control" id="bg-color" name='bg_color' required>
+                </div>
+            </div>
+            <div class="form-group col-md-2">
+                <label class="form-label" for="full-name"> Text Color <span style="color: red;">*</span></label>
+                <div class="form-control-wrap">
+                    <input type="color" class="form-control" id="color" name='color' required>
+                </div>
+            </div>
+        </div>
+        <div class="form-group"><button type="submit" class="btn btn-sm btn-primary"> SAVE TAG </button><a href="{{ route('tags.index') }}" class="btn ml-2 btn-sm btn-secondary">CANCEL</a></div>
+    </form>
 </div>
 @endsection

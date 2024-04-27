@@ -34,7 +34,7 @@ class TagController extends Controller
         $tag->created_by = auth()->user()->id;
         $tag->save();
 
-        return redirect()->route('tags.index')->with('success', 'Tag created successfully.');
+        return redirect()->route('tags.index')->with('message', 'Tag created successfully.');
     }
 
     public function show(Tag $tag)
@@ -61,13 +61,13 @@ class TagController extends Controller
         $tag->created_by = auth()->user()->id;
         $tag->update();
 
-        return redirect()->route('tags.index')->with('success', 'Tag updated successfully.');
+        return redirect()->route('tags.index')->with('message', 'Tag updated successfully.');
     }
 
     public function destroy(Tag $tag)
     {
         $tag->delete();
 
-        return redirect()->route('tags.index')->with('success', 'Tag deleted successfully.');
+        return redirect()->route('tags.index')->with('message', 'Tag deleted successfully.');
     }
 }

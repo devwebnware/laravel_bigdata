@@ -18,13 +18,13 @@ class FieldController extends Controller
     public function create()
     {
         $types = [
+            'string' => 'String',
             'text' => 'Text',
-            'textarea' => 'Textarea',
-            'number' => 'Number',
-            'date' => 'Date',
-            'time' => 'Time',
-            'datetime' => 'Datetime',
-            'boolean' => 'Boolean',
+            'integer' => 'Integer',
+            'bigInteger' => 'Big Integer',
+            'decimal' => 'Decimal',
+            'float' => 'Float',
+            'double' => 'Double',
         ];
         return view('backend.field.create', compact('types'));
     }
@@ -36,18 +36,21 @@ class FieldController extends Controller
             'type' => 'required',
         ]);
 
-        $field = new Field;
-        $field->name = $request->name;
-        $field->type = $request->type;
-        $field->created_by = auth()->user()->id;
-        if($field->save()) {
+        try {
             Schema::table('listings', function (Blueprint $table) use ($request) {
                 $columnName = $request->name;
                 $columnType = $request->type;
                 $table->$columnType($columnName)->nullable();
             });
-        }
 
-        return redirect()->route('field.index')->with('success', 'Field Created Successfully');
+            $field = new Field;
+            $field->name = $request->name;
+            $field->type = $request->type;
+            $field->created_by = auth()->user()->id;
+            $field->save();
+            return redirect()->route('field.index')->with('message', 'Field created successfully');
+        } catch (\Throwable $th) {
+            return redirect()->route('field.index')->with('error', 'Failed to create field');
+        }
     }
 }

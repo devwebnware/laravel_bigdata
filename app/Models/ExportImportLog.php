@@ -11,7 +11,7 @@ class ExportImportLog extends Model
 
     protected $fillable = [
         'type', // 1 = export, 0 = import
-        'created_by',
+        'user_id',
     ];
 
     protected $guarded = [
@@ -20,6 +20,6 @@ class ExportImportLog extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

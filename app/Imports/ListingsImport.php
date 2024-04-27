@@ -2,13 +2,22 @@
 
 namespace App\Imports;
 
-use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ListingsImport implements ToCollection
+class ListingsImport implements ToCollection, WithHeadingRow
 {
     protected $validRows = [];
+    protected $headers;
+    protected $requiredFields;
+
+    public function __construct($headers, $requiredFields = [])
+    {
+        $this->headers = $headers;
+        $this->requiredFields = $requiredFields;
+    }
 
     public function collection(Collection $rows)
     {
@@ -18,23 +27,15 @@ class ListingsImport implements ToCollection
         foreach ($rows as $row) {
             $lineNumber++;
 
-            $validator = Validator::make([
-                'column1' => $row[0],
-                'column2' => $row[1],
-            ], [
-                'column1' => 'required',
-                'column2' => 'required',
-            ]);
-
-            if ($validator->fails()) {
-                $errors[] = "Line $lineNumber: " . implode(', ', $validator->errors()->all());
-            } else {
-                // Store the valid row
-                $this->validRows[] = [
-                    'column1' => $row[0],
-                    'column2' => $row[1],
-                ];
+            foreach ($this->requiredFields as $key => $field) {
+                if (!isset($row[$field]) || empty($row[$field])) {
+                    $errors[] = "Line $lineNumber: $field is required.";
+                    continue 2;
+                }
             }
+
+            // Store the valid row
+            $this->validRows[] = $row;
         }
 
         if (!empty($errors)) {

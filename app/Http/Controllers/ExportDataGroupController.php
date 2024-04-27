@@ -53,7 +53,7 @@ class ExportDataGroupController extends Controller
             if ($exportDataGroup->save()) {
                 DB::commit();
             }
-            return redirect()->route('listing.export.group.index')->with('success', 'Group created successfully');
+            return redirect()->route('listing.export.group.index')->with('message', 'Group created successfully');
         } catch (\Throwable $th) {
             DB::rollBack();
             return redirect()->route('listing.export.group.create')->with('error', $th->getMessage());
@@ -93,7 +93,7 @@ class ExportDataGroupController extends Controller
             $exportDataGroup->column_names = implode(",", $columnNames);
             if ($exportDataGroup->update()) {
                 DB::commit();
-                return redirect()->route('listing.export.group.index')->with('success', 'Group has been updated');
+                return redirect()->route('listing.export.group.index')->with('message', 'Group has been updated');
             }
         } catch (\Throwable $th) {
             DB::rollBack();
@@ -105,7 +105,7 @@ class ExportDataGroupController extends Controller
     {
         try {
             if (ExportDataGroup::find($id)->delete()) {
-                return redirect()->route('listing.export.group.index')->with('success', 'Group deleted successfully');
+                return redirect()->route('listing.export.group.index')->with('message', 'Group deleted successfully');
             }
         } catch (\Throwable $th) {
             return redirect()->route('listing.export.group.index')->with('error', $th->getMessage());
