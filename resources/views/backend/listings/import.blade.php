@@ -45,7 +45,6 @@
                         <thead class="thead-dark">
                             <th scope="col" class="text-center">File Column</th>
                             <th scope="col" class="text-center">Database Column</th>
-                            <th scope="col" class="text-center">Required</th>
                         </thead>
                         <tbody id="headersMapBody">
                         </tbody>
@@ -112,7 +111,6 @@
                                         ${optionElements.join('')}
                                     </select>
                                 </td>
-                                <td scope="row" style='text-align:center'><input type='checkbox' class="form-check-input" name='requiredFields[${headers[i]}]' id='requiredField'/></td>
                             </tr>`
                         );
                     }
@@ -148,17 +146,7 @@
                     modalFooter.find('.second-loader').removeClass('d-none');
                 },
                 success: function(data) {
-                    if (data) {
-                        let errors = data.error.split("\n");
-                        $(".csvErrors").empty();
-                        errors.forEach(function(error) {
-                            $(".csvErrors").append(`<p><strong>${error}</strong></p>`);
-                        });
-                        $(".close-btn").trigger('click');
-                        $(".csvErrors").removeClass('d-none');
-                    } else {
-                        window.location.href = "{{ route('listings.data.import') }}";
-                    }
+                    window.location.href = "{{ route('listings.data.import') }}";
                 },
                 complete: function() {
                     modalFooter.find('.second-loader').addClass('d-none');
