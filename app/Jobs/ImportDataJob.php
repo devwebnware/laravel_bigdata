@@ -6,6 +6,7 @@ use App\Models\Tag;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\ListingTag;
+use Hamcrest\Type\IsNumeric;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -58,8 +59,12 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                                 $listedTag = $listing->listingTags->filter(function ($tag) use ($tagName) {
                                     return stripos($tag->name, $tagName) !== false;
                                 })->first();
-                                if (!$listedTag) {
-                                    $tagModel = Tag::where('name', 'like', "%{$tagName}%")->first();
+                                if ($listedTag == null) {
+                                    if (is_numeric($tagName)) {
+                                        $tagModel = Tag::find($tagName);
+                                    } else {
+                                        $tagModel = Tag::where('name', 'like', "%{$tagName}%")->first();
+                                    }
                                     if ($tagModel) {
                                         $listingTag = new ListingTag();
                                         $listingTag->listing_id = $listing->id;
@@ -102,7 +107,11 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                             $tags = explode(",", $row[$key]);
                             $listing->save();
                             foreach ($tags as $tag) {
-                                $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
+                                if (is_numeric($tag)) {
+                                    $tagModel = Tag::find($tag);
+                                } else {
+                                    $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
+                                }
                                 if ($tagModel) {
                                     $listingTag = new ListingTag();
                                     $listingTag->listing_id = $listing->id;
