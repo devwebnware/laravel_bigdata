@@ -117,15 +117,14 @@ class ListingController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Listing $listing)
     {
         try {
-            $listing = Listing::find($id);
             $listing->delete();
+            return redirect()->route('listings.index')->with('message', 'Listing deleted successfully.');
         } catch (\Throwable $th) {
             return redirect()->route('listings.index')->with('error', 'Not able to delete the listing.');
         }
-        return redirect()->route('listings.index')->with('message', 'Listing deleted successfully.');
     }
 
     public function export()
@@ -168,21 +167,10 @@ class ListingController extends Controller
     public function handelImport(Request $request)
     {
         if ($request->filled('headers')) {
-            // CSV file data validation before database operations
-            $requiredFields = [];
-            if ($request->filled('requiredFields')) {
-                $requiredFields = array_keys($request->requiredFields);
-            }
-            try {
-                $import = new ListingsImport($request['headers'], $requiredFields);
-                Excel::import($import, $request->file('data'));
-            } catch (\Exception $e) {
-                return response()->json(['error' => $e->getMessage()]);
-            }
             $import = new ImportDataJob($request['headers']);
             Excel::queueImport($import, $request->file('data'));
             $this->exportImportLogs(0);
-            return redirect()->route('listings.index');
+            return response()->json('success');
         } else {
             // Get columns names from listings table
             $tableName = 'listings';

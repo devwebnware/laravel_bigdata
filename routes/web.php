@@ -60,7 +60,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('{id}/edit', 'edit')->name('edit');
         Route::post('filter', 'filter')->name('filter');
         Route::patch('{id}/update', 'update')->name('update');
-        Route::delete('{id}/delete', 'destroy')->name('destroy');
+        Route::delete('{listing}/delete', 'destroy')->name('destroy');
 
         // Import/Export Logs
         Route::get('user/import/export/logs', 'importExportLogs')->name('user.import.export.logs');
