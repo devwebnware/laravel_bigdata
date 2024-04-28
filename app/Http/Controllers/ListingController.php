@@ -91,7 +91,7 @@ class ListingController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255',
-            'category_id' => 'required',
+            'category' => 'required',
             'tags' => 'required',
         ]);
         try {
@@ -177,7 +177,7 @@ class ListingController extends Controller
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
             // Added tag_id column
-            array_push($columnNames, 'tag_id');
+            array_push($columnNames, 'tag');
             // Get columns names from csv file
             $file = fopen($request->file('data'), 'r');
             if ($file !== false) {
@@ -250,12 +250,12 @@ class ListingController extends Controller
                             $query->Where('state', $item);
                         }
                         break;
-                    case 'category_ids':
-                        foreach ($value as $category_id) {
-                            $query->Where('category_id', $category_id);
+                    case 'categories':
+                        foreach ($value as $category) {
+                            $query->Where('category', $category);
                         }
                         break;
-                    case 'tag_ids':
+                    case 'tags':
                         $query->whereHas('listingTags', function ($query) use ($value) {
                             $query->select('listing_id')
                                 ->whereIn('tag_id', $value)

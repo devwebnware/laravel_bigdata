@@ -12,7 +12,7 @@ class Listing extends Model
     protected $table = 'listings';
     protected $fillable = [
         'name',
-        'category_id',
+        'category',
     ];
 
     public function category()

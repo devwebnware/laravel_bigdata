@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="form-group"><label class="form-label" for="tag_id">Tags</label>
+                    <div class="form-group"><label class="form-label" for="tags">Tags</label>
                         <select class="form-select" multiple="multiple" id="tags" data-placeholder="Select Tags" name="tags[]">
                             <option value="">Select Tags</option>
                             @foreach($tags as $tag)
