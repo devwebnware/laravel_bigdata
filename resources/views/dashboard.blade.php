@@ -92,7 +92,7 @@
                     </div> --}}
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Category</label>
-                        <select class="form-select" multiple="multiple" id="category_id" data-placeholder="Select Category" name='category_ids[]'>
+                        <select class="form-select" multiple="multiple" id="categories" data-placeholder="Select Category" name='categories[]'>
                             <option value="">Select Option</option>
                             @foreach ($dropdownData['categories'] as $category)
                             <option value="{{ $category->id }}">{{ $category->name }}</option>
@@ -101,7 +101,7 @@
                     </div>
                     <div class="col-md-6 mb-2">
                         <label class="form-label">Tag</label>
-                        <select class="form-select" multiple="multiple" id="tag_id" data-placeholder="Select Tag" name='tag_ids[]'>
+                        <select class="form-select" multiple="multiple" id="tags" data-placeholder="Select Tag" name='tags[]'>
                             <option value="">Select Option</option>
                             @foreach ($dropdownData['tags'] as $tag)
                             <option value="{{ $tag->id }}">{{ $tag->name }}</option>

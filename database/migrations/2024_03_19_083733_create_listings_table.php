@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('listings', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('category_id')->default(1)->references('id')->on('categories');
+            $table->foreignId('category')->nullable()->references('id')->on('categories');
             $table->timestamps();
         });
     }

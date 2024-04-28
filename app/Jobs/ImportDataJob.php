@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 
 class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadingRow
 {
@@ -38,7 +39,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                 // $value = database column name
                 // $key = csv file column name
                 switch ($key) {
-                    case 'category_id':
+                    case 'category':
                         if ($row[$key]) {
                             if (gettype($row[$key]) === 'string') {
                                 $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
@@ -52,7 +53,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                             }
                         }
                         break;
-                    case 'tag_id':
+                    case 'tag':
                         if ($row[$key]) {
                             $tags = explode(",", $row[$key]);
                             foreach ($tags as $tagName) {
@@ -90,7 +91,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                 // $key = csv file column name
 
                 switch ($key) {
-                    case 'category_id':
+                    case 'category':
                         if ($row[$key]) {
                             if (gettype($row[$key]) === 'string') {
                                 $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
@@ -98,11 +99,11 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                                 $category = Category::find($row[$key]);
                             }
                             if ($category) {
-                                $listing->category_id = $category->id;
+                                $listing->category = $category->id;
                             }
                         }
                         break;
-                    case 'tag_id':
+                    case 'tag':
                         if ($row[$key] !== null) {
                             $tags = explode(",", $row[$key]);
                             $listing->save();
@@ -136,5 +137,12 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
     public function chunkSize(): int
     {
         return 100; // Change chunk size according to your needs.
+    }
+
+    public function getCsvSettings(): array
+    {
+        return [
+            'delimiter' => ';',
+        ];
     }
 }

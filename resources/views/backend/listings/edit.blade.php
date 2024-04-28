@@ -12,15 +12,15 @@
             <div class="row">
                 <div class="mb-3 col-md-6">
                     <label for="category" style="margin-bottom: 10px;" class="form-label">CATEGORY</label>
-                    <select class="form-select" name="category_id" id="category" aria-label="Default select example">
+                    <select class="form-select" name="categories" id="category" aria-label="Default select example">
                         <option value='' selected>Open this select menu</option>
                         @foreach ($categories as $category)
-                        <option value="{{ $category->id }}" @if ($listing->category_id==$category->id) selected @endif>{{ $category->name}} </option>
+                        <option value="{{ $category->id }}" @if ($listing->category==$category->id) selected @endif>{{ $category->name}} </option>
                         @endforeach
                     </select>
                 </div>
                 <div class="mb-3 col-md-6" style="margin-bottom: 10px;">
-                    <div class="form-group"><label class="form-label" for="tag_id">TAGS</label>
+                    <div class="form-group"><label class="form-label" for="tags">TAGS</label>
                         <select class="form-select" multiple="multiple" id="tags" data-placeholder="Select Tags" name="tags[]">
                             <option value="">Select Tags</option>
                             @foreach($tags as $tag)
@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 @foreach($columnNames as $column)
-                @if($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at' && $column !== 'category_id')
+                @if($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at' && $column !== 'category')
                 <div class="mb-3 col-md-6" style="margin-bottom: 10px;">
                     <div class="form-group"><label class="form-label" for="{{ $column }}">{{ strtoupper($column) }}</label>
                         <input type="text" id="{{ $column }}" name='{{ $column }}' value='{{$listing->$column}}' class="form-control" placeholder="Enter {{ $column }}" />
