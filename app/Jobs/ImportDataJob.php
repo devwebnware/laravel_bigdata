@@ -124,7 +124,6 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         break;
                     default:
                         $listing->$value = $row[$key];
-                        $listing->save();
                         break;
                 }
             }
