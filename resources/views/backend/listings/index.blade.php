@@ -168,8 +168,9 @@
                 <th scope="col">#</th>
                 <th scope="col">ACTION</th>
                 <th scope="col">TAGS</th>
+                <th scope="col">Category</th>
                 @foreach($ColumnNames as $column)
-                @if($column !== 'id')
+                @if($column !== 'id' && $column !== 'category' && $column !== 'created_at' && $column !== 'updated_at')
                 <th scope="col">{{ strtoupper($column) }}</th>
                 @endif
                 @endforeach
@@ -203,10 +204,14 @@
                     No tags assigned
                     @endforelse
                 </td>
-                <td> {{ $listing->category->name}}
+                @if($listing->category)
+                <td> {{ $listing->categoryModel->name }}
                 </td>
+                @else
+                N/A
+                @endif
                 @foreach($listing->getAttributes() as $key => $attribute)
-                @if($key !== 'id' && $key !== 'category')
+                @if($key !== 'id' && $key !== 'category' && $key !== 'created_at' && $key !== 'updated_at')
                 <td scope="row">
                     @if($attribute)
                     {{ substr($attribute, 0, 20) }}

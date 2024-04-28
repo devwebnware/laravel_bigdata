@@ -168,7 +168,7 @@ class ListingController extends Controller
     {
         if ($request->filled('headers')) {
             $headers = $request['headers'];
-            $import = new ImportDataJob($headers);
+            $import = new ImportDataJob($headers, auth()->user());
             Excel::queueImport($import, $request->file('data'));
             $this->exportImportLogs(0);
             return response()->json('success');

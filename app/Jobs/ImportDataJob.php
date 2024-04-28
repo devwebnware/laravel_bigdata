@@ -20,10 +20,12 @@ use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadingRow
 {
     protected $mappingData;
+    protected $user;
 
-    public function __construct($mappingData)
+    public function __construct($mappingData, $user)
     {
         $this->mappingData = $mappingData;
+        $this->user = $user;
     }
 
     public function handle(): void
@@ -47,6 +49,14 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                                 $category = Category::find($row[$key]);
                             }
                             if ($category) {
+                                $listing->update([
+                                    $value => $category->id
+                                ]);
+                            } else {
+                                $category = new Category();
+                                $category->name = $row[$key];
+                                $category->created_by = $this->user->id;
+                                $category->save();
                                 $listing->update([
                                     $value => $category->id
                                 ]);
@@ -93,12 +103,14 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                 switch ($key) {
                     case 'category':
                         if ($row[$key]) {
-                            if (gettype($row[$key]) === 'string') {
-                                $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
-                            } else {
-                                $category = Category::find($row[$key]);
-                            }
+                            $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
                             if ($category) {
+                                $listing->category = $category->id;
+                            } else {
+                                $category = new Category();
+                                $category->name = $row[$key];
+                                $category->created_by = $this->user->id;
+                                $category->save();
                                 $listing->category = $category->id;
                             }
                         }
