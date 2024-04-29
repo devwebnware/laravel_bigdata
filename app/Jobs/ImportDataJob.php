@@ -20,10 +20,12 @@ use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadingRow
 {
     protected $mappingData;
+    protected $user;
 
-    public function __construct($mappingData)
+    public function __construct($mappingData, $user)
     {
         $this->mappingData = $mappingData;
+        $this->user = $user;
     }
 
     public function handle(): void
@@ -32,7 +34,12 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
 
     public function model(array $row)
     {
-        $listing = Listing::where('name', $row[$this->mappingData['name']])->with('listingTags')->first();
+        // If id column exists it will find the record using the id else it will find the record using the name
+        if (in_array('id', $this->mappingData)) {
+            $listing = Listing::where('id', $row[$this->mappingData['id']])->with('listingTags')->first();
+        } else {
+            $listing = Listing::where('name', $row[$this->mappingData['name']])->with('listingTags')->first();
+        }
 
         if ($listing !== null) {
             foreach ($this->mappingData as $key => $value) {
@@ -47,6 +54,14 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                                 $category = Category::find($row[$key]);
                             }
                             if ($category) {
+                                $listing->update([
+                                    $value => $category->id
+                                ]);
+                            } else {
+                                $category = new Category();
+                                $category->name = $row[$key];
+                                $category->created_by = $this->user->id;
+                                $category->save();
                                 $listing->update([
                                     $value => $category->id
                                 ]);
@@ -93,12 +108,14 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                 switch ($key) {
                     case 'category':
                         if ($row[$key]) {
-                            if (gettype($row[$key]) === 'string') {
-                                $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
-                            } else {
-                                $category = Category::find($row[$key]);
-                            }
+                            $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
                             if ($category) {
+                                $listing->category = $category->id;
+                            } else {
+                                $category = new Category();
+                                $category->name = $row[$key];
+                                $category->created_by = $this->user->id;
+                                $category->save();
                                 $listing->category = $category->id;
                             }
                         }
@@ -124,7 +141,6 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         break;
                     default:
                         $listing->$value = $row[$key];
-                        $listing->save();
                         break;
                 }
             }

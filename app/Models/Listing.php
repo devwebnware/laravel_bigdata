@@ -15,9 +15,9 @@ class Listing extends Model
         'category',
     ];
 
-    public function category()
+    public function categoryModel()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category', 'id');
     }
 
     public function listingTags()
