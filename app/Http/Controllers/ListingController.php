@@ -95,6 +95,7 @@ class ListingController extends Controller
             'tags' => 'required',
         ]);
         try {
+            DB::beginTransaction();
             $listing = Listing::find($id);
             $requestData = $request->all();
             foreach ($requestData as $column => $data) {
@@ -111,8 +112,10 @@ class ListingController extends Controller
                     $listingTag->save();
                 }
             }
+            DB::commit();
             return redirect()->route('listings.index')->with('message', 'Listing updated successfully.');
         } catch (\Throwable $th) {
+            DB::rollBack();
             return redirect()->route('listings.edit')->with('error', 'Not able to update listing.');
         }
     }
@@ -268,7 +271,6 @@ class ListingController extends Controller
                         break;
                     case 'phone':
                     case 'site':
-
                         if ($value == 'null') {
                             $query->whereNull($key);
                         } else {

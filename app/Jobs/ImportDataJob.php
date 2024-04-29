@@ -6,7 +6,6 @@ use App\Models\Tag;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\ListingTag;
-use Hamcrest\Type\IsNumeric;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -48,23 +47,17 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                 switch ($key) {
                     case 'category':
                         if ($row[$key]) {
-                            if (gettype($row[$key]) === 'string') {
-                                $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
-                            } else {
-                                $category = Category::find($row[$key]);
-                            }
+                            $category = Category::where('name', $row[$key])->first();
                             if ($category) {
-                                $listing->update([
-                                    $value => $category->id
-                                ]);
+                                $listing->$value = $category->id;
+                                $listing->update();
                             } else {
-                                $category = new Category();
-                                $category->name = $row[$key];
-                                $category->created_by = $this->user->id;
-                                $category->save();
-                                $listing->update([
-                                    $value => $category->id
+                                $category = Category::create([
+                                    'name' => $row[$key],
+                                    'created_by' => $this->user->id
                                 ]);
+                                $listing->$value = $category->id;
+                                $listing->update();
                             }
                         }
                         break;
@@ -92,9 +85,10 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                         }
                         break;
                     default:
-                        $listing->update([
-                            $value => $row[$key]
-                        ]);
+                        if ($value !== 'id') {
+                            $listing->$value = $row[$key];
+                            $listing->update();
+                        };
                         break;
                 }
             }

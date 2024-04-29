@@ -58,7 +58,8 @@
                         <a href="#" class="btn close-btn btn-secondery" data-dismiss="modal" aria-label="Close">
                             Close
                         </a>
-                        <button type="submit" class="btn btn-info">Import</button>
+                        <button type="submit" class="btn btn-info">IMPORT</button>
+                        <button type="button" class="btn clear-btn btn-secondery">CLEAR</button>
                     </div>
                 </div>
             </form>
@@ -156,6 +157,11 @@
                     console.log('Error:', data);
                 }
             });
+        });
+    });
+    $(document).ready(function() {
+        $(".clear-btn").on("click", function() {
+            $('.form-control, .form-select').val('').trigger('change');
         });
     });
 </script>

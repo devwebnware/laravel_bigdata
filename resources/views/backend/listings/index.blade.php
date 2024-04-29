@@ -197,7 +197,7 @@
                 </td>
                 <td>
                     @forelse($listing->listingTags as $tag)
-                    <span class="badge rounded-pill" style="background-color: {{ $tag->bg_color ?? 'default_color' }}; color: {{ $tag->color ?? 'color' }} ">
+                    <span class="badge rounded-pill" style="background-color: '{{ $tag->bg_color ?? 'default_color' }}'; color: '{{ $tag->color ?? 'color' }}' ">
                         {{ substr($tag->name, 0, 20) }}
                     </span>
                     @empty
@@ -208,7 +208,7 @@
                 <td> {{ $listing->categoryModel->name }}
                 </td>
                 @else
-                N/A
+                <td>N/A</td>
                 @endif
                 @foreach($listing->getAttributes() as $key => $attribute)
                 @if($key !== 'id' && $key !== 'category' && $key !== 'created_at' && $key !== 'updated_at')
