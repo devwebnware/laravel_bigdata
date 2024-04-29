@@ -34,7 +34,12 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
 
     public function model(array $row)
     {
-        $listing = Listing::where('name', $row[$this->mappingData['name']])->with('listingTags')->first();
+        // If id column exists it will find the record using the id else it will find the record using the name
+        if (in_array('id', $this->mappingData)) {
+            $listing = Listing::where('id', $row[$this->mappingData['id']])->with('listingTags')->first();
+        } else {
+            $listing = Listing::where('name', $row[$this->mappingData['name']])->with('listingTags')->first();
+        }
 
         if ($listing !== null) {
             foreach ($this->mappingData as $key => $value) {
