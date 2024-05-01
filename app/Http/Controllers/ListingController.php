@@ -11,15 +11,18 @@ use App\Models\Category;
 use App\Models\FailedJob;
 use App\Models\ListingTag;
 use App\Jobs\ImportDataJob;
+use App\Jobs\ImportExcelJob;
 use Illuminate\Http\Request;
 use App\Helpers\GeneralHelper;
 use App\Models\ImportJobStatus;
 use App\Imports\ListingsImport;
+use App\Imports\ExcelImport;
 use App\Models\ExportImportLog;
 use App\Exports\ListingsExport;
 use App\Models\ExportDataGroup;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
@@ -170,12 +173,29 @@ class ListingController extends Controller
 
     public function handelImport(Request $request)
     {
+        $filePath = $request->file('data');
+        if ($filePath) {
+            // Get the file extension
+            $fileExtension = $filePath->getClientOriginalExtension();
+        }
         if ($request->filled('headers')) {
             $headers = $request['headers'];
-            $import = new ImportDataJob($headers, auth()->user());
-            Excel::queueImport($import, $request->file('data'));
-            $this->exportImportLogs(0);
-            return response()->json('success');
+            switch ($fileExtension) {
+                case 'xlsx':
+                    $import = new ImportExcelJob($headers, auth()->user());
+                    Excel::queueImport($import, $request->file('data'));
+                    $this->exportImportLogs(0);
+                    return response()->json('success');
+                case 'csv':
+                    $import = new ImportDataJob($headers, auth()->user());
+                    Excel::queueImport($import, $request->file('data'));
+                    $this->exportImportLogs(0);
+                    return response()->json('success');
+                    break;
+                default:
+                    return response()->json(['error' => 'File must be type of csv or xlsx']);
+                    break;
+            }
         } else {
             // Get columns names from listings table
             $tableName = 'listings';
@@ -183,24 +203,32 @@ class ListingController extends Controller
             // Added tag_id column
             array_push($columnNames, 'tag');
             // Get columns names from csv file
-            $filePath = $request->file('data');
-
-            $file = new SplFileObject($filePath, 'r');
-
-            // Set flags to skip empty lines
-            $file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY);
             $headers = [];
-            // Iterate through the file
-            foreach ($file as $lineNumber => $line) {
-                // Process the first line
-                if ($lineNumber === 0) {
-                    $headers = $line;
+            switch ($fileExtension) {
+                case 'xlsx':
+                    $import = new ExcelImport();
+                    Excel::import($import, $filePath);
+                    $headers = $import->getFirstRow();
                     break;
-                }
+                case 'csv':
+                    $file = new SplFileObject($filePath, 'r');
+                    // Set flags to skip empty lines
+                    $file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY);
+                    // Iterate through the file
+                    foreach ($file as $lineNumber => $line) {
+                        // Process the first line
+                        if ($lineNumber === 0) {
+                            $headers = $line;
+                            break;
+                        }
+                    }
+                    // Close the file when finished reading
+                    $file = null;
+                    break;
+                default:
+                    return response()->json(['error' => 'File must be type of csv or xlsx']);
+                    break;
             }
-
-            // Close the file when finished reading
-            $file = null;
             return response()->json(['headers' => $headers, 'columnNames' => $columnNames]);
         }
     }
