@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use SplFileObject;
 use Carbon\Carbon;
 use App\Models\Tag;
 use App\Models\Job;
@@ -159,7 +160,7 @@ class ListingController extends Controller
             return redirect()->back()->with('error', 'Not able to fetch the listings.');
         }
         $this->exportImportLogs(1);
-        return Excel::download(new ListingsExport($listings), 'listings.csv');
+        return Excel::download(new ListingsExport($listings), 'listings.xlsx');
     }
 
     public function import()
@@ -182,11 +183,24 @@ class ListingController extends Controller
             // Added tag_id column
             array_push($columnNames, 'tag');
             // Get columns names from csv file
-            $file = fopen($request->file('data'), 'r');
-            if ($file !== false) {
-                $headers = fgetcsv($file);
-                fclose($file);
+            $filePath = $request->file('data');
+
+            $file = new SplFileObject($filePath, 'r');
+
+            // Set flags to skip empty lines
+            $file->setFlags(SplFileObject::READ_CSV | SplFileObject::SKIP_EMPTY);
+            $headers = [];
+            // Iterate through the file
+            foreach ($file as $lineNumber => $line) {
+                // Process the first line
+                if ($lineNumber === 0) {
+                    $headers = $line;
+                    break;
+                }
             }
+
+            // Close the file when finished reading
+            $file = null;
             return response()->json(['headers' => $headers, 'columnNames' => $columnNames]);
         }
     }
