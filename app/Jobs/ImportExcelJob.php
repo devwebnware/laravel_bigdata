@@ -34,10 +34,9 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
 
     public function model(array $row)
     {
-        $listing = null;
         // Chcek for column existance and get listing accordingly
         if (in_array('id', $this->mappingData)) {
-            $this->getListing('id', $row[$this->mappingData['id']]);
+            $listing = $this->getListing('id', $row[$this->mappingData['id']]);
         } else if (in_array('landing_url_unique', $this->mappingData)) {
             $url = $row[$this->mappingData['landing_url_unique']];
             $urlParts = parse_url($url);
@@ -47,16 +46,16 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
             $data = $query['a'];
             // Remove hyphens
             $landing_url_unique = str_replace('-', ' ', $data);
-            $this->getListing('name', $landing_url_unique);
+            $listing = $this->getListing('name', $landing_url_unique);
         } else if (in_array('name', $this->mappingData)) {
-            $this->getListing('name', $row[$this->mappingData['name']]);
+            $listing = $this->getListing('name', $row[$this->mappingData['name']]);
         } else if (in_array('phone_number', $this->mappingData)) {
             $phone_number = substr($row[$this->mappingData['phone_number']], -10);
-            $this->getListing('phone_number', $phone_number);
+            $listing = $this->getListing('phone_number', $phone_number);
         } else if (in_array('email', $this->mappingData)) {
-            $this->getListing('email', $row[$this->mappingData['email']]);
+            $listing = $this->getListing('email', $row[$this->mappingData['email']]);
         } else if (in_array('business_url', $this->mappingData)) {
-            $this->getListing('business_url', $row[$this->mappingData['business_url']]);
+            $listing = $this->getListing('business_url', $row[$this->mappingData['business_url']]);
         }
         // If listing exists then update the listing data
         if ($listing !== null) {
@@ -108,12 +107,12 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                             }
                         }
                         break;
-                        case 'phone_number':
-                            if($row[$key]) {
-                                $number = substr($row[$key], -10);
-                                $listing->$value = $number;
-                                $listing->update();
-                            }
+                    case 'phone_number':
+                        if ($row[$key]) {
+                            $number = substr($row[$key], -10);
+                            $listing->$value = $number;
+                            $listing->update();
+                        }
                         break;
                     default:
                         if ($value !== 'id') {
@@ -172,12 +171,12 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                             }
                         }
                         break;
-                        case 'phone_number':
-                            if($row[$key]) {
-                                // Get only the last 10 digits of the phone number
-                                $number = substr($row[$key], -10);
-                                $listing->$value = $number;
-                            }
+                    case 'phone_number':
+                        if ($row[$key]) {
+                            // Get only the last 10 digits of the phone number
+                            $number = substr($row[$key], -10);
+                            $listing->$value = $number;
+                        }
                         break;
                     default:
                         $listing->$value = $row[$key];
