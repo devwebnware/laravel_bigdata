@@ -91,6 +91,11 @@
                     $form.find('.first-loader').removeClass('d-none');
                 },
                 success: function(data) {
+                    if(data.error) {
+                        if(confirm(data.error)) {
+                            location.reload();
+                        }
+                    }
                     let headers = data.headers;
                     let columnNames = data.columnNames;
                     let body = $("#headersMapBody");
