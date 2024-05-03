@@ -24,6 +24,7 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
     public function __construct($mappingData, $user)
     {
         $this->mappingData = $mappingData;
+        // Logged in user
         $this->user = $user;
     }
 
@@ -33,13 +34,30 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
 
     public function model(array $row)
     {
-        // If id column exists it will find the record using the id else it will find the record using the name
+        // Chcek for column existance and get listing accordingly
         if (in_array('id', $this->mappingData)) {
-            $listing = Listing::where('id', $row[$this->mappingData['id']])->with('listingTags')->first();
-        } else {
-            $listing = Listing::where('name', $row[$this->mappingData['name']])->with('listingTags')->first();
+            $listing = $this->getListing('id', $row[$this->mappingData['id']]);
+        } else if (in_array('landing_url_unique', $this->mappingData)) {
+            $url = $row[$this->mappingData['landing_url_unique']];
+            $urlParts = parse_url($url);
+            // Get the query parameters
+            parse_str($urlParts['query'], $query);
+            // Extract the 'a' parameter
+            $data = $query['a'];
+            // Remove hyphens
+            $landing_url_unique = str_replace('-', ' ', $data);
+            $listing = $this->getListing('name', $landing_url_unique);
+        } else if (in_array('name', $this->mappingData)) {
+            $listing = $this->getListing('name', $row[$this->mappingData['name']]);
+        } else if (in_array('phone_number', $this->mappingData)) {
+            $phone_number = substr($row[$this->mappingData['phone_number']], -10);
+            $listing = $this->getListing('phone_number', $phone_number);
+        } else if (in_array('email', $this->mappingData)) {
+            $listing = $this->getListing('email', $row[$this->mappingData['email']]);
+        } else if (in_array('business_url', $this->mappingData)) {
+            $listing = $this->getListing('business_url', $row[$this->mappingData['business_url']]);
         }
-
+        // If listing exists then update the listing data
         if ($listing !== null) {
             foreach ($this->mappingData as $key => $value) {
                 // $value = database column name
@@ -47,11 +65,13 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                 switch ($key) {
                     case 'category':
                         if ($row[$key]) {
+                            // if category exists then update the category id
                             $category = Category::where('name', $row[$key])->first();
                             if ($category) {
                                 $listing->$value = $category->id;
                                 $listing->update();
                             } else {
+                                // if category not found then create new category and then update the category id
                                 $category = Category::create([
                                     'name' => $row[$key],
                                     'created_by' => $this->user->id
@@ -63,8 +83,11 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                         break;
                     case 'tag':
                         if ($row[$key]) {
+                            // Example data you get inside $row[$key] = tag4,tag5,tag6 || 4,5,6
+                            // Create a array of tags
                             $tags = explode(",", $row[$key]);
                             foreach ($tags as $tagName) {
+                                // Find tags in the listing
                                 $listedTag = $listing->listingTags->filter(function ($tag) use ($tagName) {
                                     return stripos($tag->name, $tagName) !== false;
                                 })->first();
@@ -84,6 +107,13 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                             }
                         }
                         break;
+                    case 'phone_number':
+                        if ($row[$key]) {
+                            $number = substr($row[$key], -10);
+                            $listing->$value = $number;
+                            $listing->update();
+                        }
+                        break;
                     default:
                         if ($value !== 'id') {
                             $listing->$value = $row[$key];
@@ -93,6 +123,7 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                 }
             }
         } else {
+            // If listing doesn't exist then create a new listing
             $listing = new Listing();
             foreach ($this->mappingData as $key => $value) {
 
@@ -103,9 +134,11 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                     case 'category':
                         if ($row[$key]) {
                             $category = Category::where('name', 'like', "%{$row[$key]}%")->first();
+                            // If category exists then update the category id
                             if ($category) {
                                 $listing->category = $category->id;
                             } else {
+                                // If category doesn't exist then create a new category and update the category id
                                 $category = new Category();
                                 $category->name = $row[$key];
                                 $category->created_by = $this->user->id;
@@ -116,14 +149,19 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                         break;
                     case 'tag':
                         if ($row[$key] !== null) {
+                            // Example data you get inside $row[$key] = tag4,tag5,tag6 || 4,5,6
+                            // Create a array of tags
                             $tags = explode(",", $row[$key]);
+                            // Save the listing so we can get the listing id inside the loop
                             $listing->save();
                             foreach ($tags as $tag) {
+                                // find tag by id or name
                                 if (is_numeric($tag)) {
                                     $tagModel = Tag::find($tag);
                                 } else {
                                     $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
                                 }
+                                // If tag exists then create a pivot relational table for listing and tags
                                 if ($tagModel) {
                                     $listingTag = new ListingTag();
                                     $listingTag->listing_id = $listing->id;
@@ -131,6 +169,13 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                                     $listingTag->save();
                                 }
                             }
+                        }
+                        break;
+                    case 'phone_number':
+                        if ($row[$key]) {
+                            // Get only the last 10 digits of the phone number
+                            $number = substr($row[$key], -10);
+                            $listing->$value = $number;
                         }
                         break;
                     default:
@@ -151,5 +196,10 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
     public function startRow(): int
     {
         return 2; // Skip the first row if it contains headers
+    }
+    public function getListing($column, $value)
+    {
+        $listing = Listing::where($column, $value)->with('listingTags')->first();
+        return $listing;
     }
 }

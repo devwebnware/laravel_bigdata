@@ -287,17 +287,17 @@ class ListingController extends Controller
                         break;
                     case 'cities':
                         foreach ($value as $item) {
-                            $query->Where('city', $item);
+                            $query->orWhere('city', $item);
                         }
                         break;
                     case 'states':
                         foreach ($value as $item) {
-                            $query->Where('state', $item);
+                            $query->orWhere('state', $item);
                         }
                         break;
                     case 'categories':
                         foreach ($value as $category) {
-                            $query->Where('category', $category);
+                            $query->orWhere('category', $category);
                         }
                         break;
                     case 'tags':
