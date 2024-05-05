@@ -52,9 +52,6 @@
                 </div>
                 <div class="modal-footer">
                     <div class="mt-2">
-                        <div class="spinner-border second-loader ml-3 d-none" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
                         <a href="#" class="btn close-btn btn-secondery" data-dismiss="modal" aria-label="Close">
                             Close
                         </a>
@@ -66,12 +63,42 @@
         </div>
     </div>
 </div>
+<div id="loader-container">
+    <div id="loader"></div>
+</div>
 <style>
-    .second-loader {
-        width: 1.6rem;
-        height: 1.6rem;
-        vertical-align: middle;
-    }
+
+    #loader-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 9999; /* Ensure the loader is on top */
+}
+
+#loader {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -25px; /* Half of the height */
+    margin-left: -25px; /* Half of the width */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
 </style>
 @push('custom-js')
 <script>
@@ -149,16 +176,16 @@
                 cache: false,
                 processData: false,
                 beforeSend: function() {
-                    modalFooter.find('.second-loader').removeClass('d-none');
+                    $('#loader-container').fadeIn();
                 },
                 success: function(data) {
-                    window.location.href = "{{ route('listings.data.import') }}";
+                    window.location.href = "{{ route('listings.import.data.status') }}";
                 },
                 complete: function() {
-                    modalFooter.find('.second-loader').addClass('d-none');
+                    $('#loader-container').fadeOut();
                 },
                 error: function(data) {
-                    modalFooter.find('.second-loader').addClass('d-none');
+                    $('#loader-container').fadeOut();
                     console.log('Error:', data);
                 }
             });
