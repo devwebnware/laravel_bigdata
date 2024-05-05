@@ -201,7 +201,7 @@ class ListingController extends Controller
             $tableName = 'listings';
             $columnNames = Schema::getColumnListing($tableName);
             // Added tag_id column
-            array_push($columnNames, 'tag');
+            array_splice($columnNames, 2, 0, 'tag');
             // Get columns names from csv file
             $headers = [];
             switch ($fileExtension) {
