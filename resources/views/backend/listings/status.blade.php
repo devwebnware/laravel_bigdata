@@ -32,7 +32,7 @@
             </tr>
             @empty
             <tr class="text-center">
-                <td scope="row" colspan="6">No Data Available</td>
+                <td scope="row" colspan="7">No Data Available</td>
             </tr>
             @endforelse
         </tbody>
