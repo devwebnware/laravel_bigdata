@@ -16,7 +16,6 @@ use Illuminate\Http\Request;
 use App\Helpers\GeneralHelper;
 use App\Models\ImportJobStatus;
 use App\Imports\ListingsImport;
-use App\Imports\ExcelImport;
 use App\Models\ExportImportLog;
 use App\Exports\ListingsExport;
 use App\Models\ExportDataGroup;
@@ -26,6 +25,7 @@ use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -206,9 +206,20 @@ class ListingController extends Controller
             $headers = [];
             switch ($fileExtension) {
                 case 'xlsx':
-                    $import = new ExcelImport();
-                    Excel::import($import, $filePath);
-                    $headers = $import->getFirstRow();
+                    $reader = ReaderEntityFactory::createXLSXReader();
+                    // Open the Excel file in read mode
+                    $reader->open($filePath);
+                    // Iterate through the rows
+                    foreach ($reader->getSheetIterator() as $sheet) {
+                        foreach ($sheet->getRowIterator() as $row) {
+                            // Get the values of cells in the first row
+                            $headers = $row->toArray();
+                            // Break after processing the first row
+                            break 2;
+                        }
+                    }
+                    // Close the reader
+                    $reader->close();
                     break;
                 case 'csv':
                     $file = new SplFileObject($filePath, 'r');
@@ -338,15 +349,24 @@ class ListingController extends Controller
         return view('backend.log.index', compact('logs'));
     }
 
-    public function getStatus()
+    public function getStatus(Request $request)
     {
-        $jobs = Job::all();
+        $inProgressJobs = Job::all();
         $failedJobs = FailedJob::all();
-        foreach ($jobs as $job) {
+
+        // Format date fields
+        foreach ($inProgressJobs as $job) {
             $job->available_at = Carbon::parse($job->available_at)->format('d-m-Y');
             $job->created_at = Carbon::parse($job->created_at)->format('d-m-Y');
         }
-        return view('backend.listings.status', compact('jobs', 'failedJobs'));
+
+        // Check if the request is AJAX
+        if ($request->ajax()) {
+            return response()->json([$inProgressJobs, $failedJobs]);
+        } else {
+            // For non-AJAX requests
+            return view('backend.listings.status', compact('inProgressJobs', 'failedJobs'));
+        }
     }
 
     private function exportImportLogs($type)
