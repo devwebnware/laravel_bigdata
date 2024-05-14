@@ -17,7 +17,7 @@
             <input type="file" id="file" name='data' />
         </div>
         <div class="d-flex flex-direction-row">
-            <button type="submit" class="btn btn-primary" class="btn btn-sm btn-success">UPLOAD</button>
+            <button type="submit" class="btn btn-primary" onclick="uploadFile()" class="btn btn-sm btn-success">UPLOAD</button>
             <a href="{{ route('listings.index') }}" class="btn ml-2 btn-sm btn-secondary">CANCEL</a>
             <div class="spinner-border first-loader ml-3 d-none" role="status">
                 <span class="sr-only">Loading...</span>
