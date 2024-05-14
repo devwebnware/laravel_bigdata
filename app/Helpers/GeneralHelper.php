@@ -13,8 +13,8 @@ class GeneralHelper
     public static function getDropdowns()
     {
         $listings = Listing::all();
-        $cities = $listings->pluck('city')->filter()->unique()->limit(10);
-        $states = $listings->pluck('state')->filter()->unique()->limit(10);
+        $cities = $listings->pluck('city')->filter()->unique()->take(10);
+        $states = $listings->pluck('state')->filter()->unique()->take(10);
         // $countries = $listings->pluck('country')->filter()->unique();
 
         $categories = Category::select('id', 'name')->limit(10)->get();
