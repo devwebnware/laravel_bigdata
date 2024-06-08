@@ -6,6 +6,7 @@ use App\Models\Tag;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\ListingTag;
+use App\Models\ParentCategory;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -80,6 +81,24 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                                 }
                             }
                             break;
+                        case 'parent_category':
+                            if ($row[$key]) {
+                                // if category exists then update the category id
+                                $category = ParentCategory::where('name', $row[$key])->first();
+                                if ($category) {
+                                    $listing->$value = $category->id;
+                                    $listing->update();
+                                } else {
+                                    // if category not found then create new category and then update the category id
+                                    $category = ParentCategory::create([
+                                        'name' => $row[$key],
+                                        'created_by' => $this->user->id
+                                    ]);
+                                    $listing->$value = $category->id;
+                                    $listing->update();
+                                }
+                            }
+                            break;
                         case 'tag':
                             if ($row[$key]) {
                                 // Example data you get inside $row[$key] = tag4,tag5,tag6 || 4,5,6
@@ -139,6 +158,22 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                                 } else {
                                     // If category doesn't exist then create a new category and update the category id
                                     $category = new Category();
+                                    $category->name = $row[$key];
+                                    $category->created_by = $this->user->id;
+                                    $category->save();
+                                    $listing->category = $category->id;
+                                }
+                            }
+                            break;
+                        case 'parent_category':
+                            if ($row[$key]) {
+                                $category = ParentCategory::where('name', 'like', "%{$row[$key]}%")->first();
+                                // If category exists then update the category id
+                                if ($category) {
+                                    $listing->category = $category->id;
+                                } else {
+                                    // If category doesn't exist then create a new category and update the category id
+                                    $category = new ParentCategory();
                                     $category->name = $row[$key];
                                     $category->created_by = $this->user->id;
                                     $category->save();

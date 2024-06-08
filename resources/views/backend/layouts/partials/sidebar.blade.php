@@ -18,6 +18,11 @@
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
+                        <a href="{{ route('parent.categories.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-book"></em></span>
+                            <span class="nk-menu-text">Parent Category</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item has-sub">
                         <a href="{{ route('categories.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-book"></em></span>
                             <span class="nk-menu-text">Category</span>
                         </a>
