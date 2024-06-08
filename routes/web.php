@@ -10,6 +10,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\ParentCategoryController;
 use App\Http\Controllers\ExportDataGroupController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
@@ -49,6 +50,14 @@ Route::group(['middleware' => ['auth']], function () {
 
     // Category CRUD
     Route::resource('categories', CategoryController::class);
+    Route::controller(ParentCategoryController::class)->prefix('parent/')->name('parent.')->group(function () {
+        Route::get('categories', 'index')->name('categories.index');
+        Route::get('category/create', 'create')->name('category.create');
+        Route::post('category/store', 'store')->name('category.store');
+        Route::get('category/{ParentCategory}/edit', 'edit')->name('category.edit');
+        Route::patch('ctaegory/{ParentCategory}/update', 'update')->name('category.update');
+        Route::get('category/{ParentCategory}/delete', 'destroy')->name('category.destroy');
+    });
 
     // Tags CRUD
     Route::resource('tags', TagController::class);
