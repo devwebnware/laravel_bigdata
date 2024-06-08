@@ -19,7 +19,7 @@ class Listing extends Model
     {
         return $this->belongsTo(Category::class, 'category', 'id');
     }
-
+    //
     public function parentCategory()
     {
         return $this->belongsTo(ParentCategory::class, 'parent_category', 'id');
