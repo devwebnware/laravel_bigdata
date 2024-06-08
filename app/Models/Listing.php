@@ -20,6 +20,11 @@ class Listing extends Model
         return $this->belongsTo(Category::class, 'category', 'id');
     }
 
+    public function parentCategory()
+    {
+        return $this->belongsTo(ParentCategory::class, 'parent_category', 'id');
+    }
+
     public function listingTags()
     {
         return $this->belongsToMany(Tag::class, 'listing_tags', 'listing_id', 'tag_id');
