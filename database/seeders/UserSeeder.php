@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
         // Create admin user
         $admin = User::create([
             'name' => 'Developer',
-            'email' => 'developer@webnware.com',
+            'email' => 'developer@bigdata.com',
             'password' => bcrypt('abc2@bcr')
         ]);
         $admin->assignRole('admin');
@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
         // Create client user
         $client = User::create([
             'name' => 'Client',
-            'email' => 'client@webnware.com',
+            'email' => 'client@bigdata.com',
             'password' => bcrypt('abc2@bcr')
         ]);
         $client->assignRole('client');
