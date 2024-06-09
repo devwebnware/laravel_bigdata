@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('listings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category')->nullable()->references('id')->on('categories');
+            $table->foreignId('parent_category')->nullable()->references('id')->on('parent_categories');
             $table->integer('phone_number')->nullable();
             $table->string('name');
             $table->text('business_url')->nullable();
