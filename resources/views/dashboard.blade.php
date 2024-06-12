@@ -100,6 +100,15 @@
                         </select>
                     </div>
                     <div class="col-md-6 mb-2">
+                        <label class="form-label">Parent Category</label>
+                        <select class="form-select" multiple="multiple" id="parent_categories" data-placeholder="Select Parent Category" name='parent_categories[]'>
+                            <option value="">Select Option</option>
+                            @foreach ($dropdownData['parent_categories'] as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-2">
                         <label class="form-label">Tag</label>
                         <select class="form-select" multiple="multiple" id="tags" data-placeholder="Select Tag" name='tags[]'>
                             <option value="">Select Option</option>
@@ -174,7 +183,8 @@
 </div>
 @endsection
 @push('custom-js')
-<script>
+{{-- Column groups --}}
+<script id="column-group">
     let columnGroup = {!! json_encode($columnGroup) !!};
     $(document).ready(function() {
         $("#column_group").on("change", function(){
