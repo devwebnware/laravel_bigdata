@@ -9,7 +9,7 @@ class ParentCategoryController extends Controller
 {
     public function index()
     {
-        $categories = ParentCategory::all();
+        $categories = ParentCategory::withCount('listings')->get();
         return view('backend.parentCategories.index', compact('categories'));
     }
 
