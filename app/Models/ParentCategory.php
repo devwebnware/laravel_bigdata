@@ -17,4 +17,9 @@ class ParentCategory extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function listings()
+    {
+        return $this->hasMany(Listing::class, 'parent_category', 'id');
+    }
 }
