@@ -311,6 +311,11 @@ class ListingController extends Controller
                             $query->orWhere('category', $category);
                         }
                         break;
+                    case 'parent_categories':
+                        foreach ($value as $category) {
+                            $query->orWhere('category', $category);
+                        }
+                        break;
                     case 'tags':
                         $query->whereHas('listingTags', function ($query) use ($value) {
                             $query->select('listing_id')
