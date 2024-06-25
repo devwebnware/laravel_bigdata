@@ -16,6 +16,7 @@
                 <th scope="col">RESERVED AT</th>
                 <th scope="col">AVAILABLE AT</th>
                 <th scope="col">CREATED AT</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,7 @@
                 <td scope="row">{{ $job->reserved_at }}</td>
                 <td scope="row">{{ $job->available_at }}</td>
                 <td scope="row">{{ $job->created_at }}</td>
+                <td scope="row"><div class="Jobloader"></div></td>
             </tr>
             @empty
             <tr class="text-center">
@@ -68,6 +70,17 @@
         </tbody>
     </table>
 </div>
+<style>
+.Jobloader {
+  width: calc(80px / cos(45deg));
+  height: 14px;
+  background: repeating-linear-gradient(-45deg,#2B3748 0 15px,#0000 0 20px) left/200% 100%;
+  animation: l3 2s infinite linear;
+}
+@keyframes l3 {
+    100% {background-position:right}
+}
+</style>
 @push('custom-js')
 <script>
     // Function to send AJAX request and update table data
