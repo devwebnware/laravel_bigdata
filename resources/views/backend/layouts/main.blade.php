@@ -11,7 +11,7 @@
     <!-- Fav Icon  -->
     <link rel="shortcut icon" href="{{ asset('assets/img/ad-favicon.png') }}">
     <!-- Page Title  -->
-    <title>Admin Dashboard Dashboard</title>
+    <title>Admin Dashboard</title>
     <!-- StyleSheets  -->
     @stack('page-css')
     <link rel="stylesheet" href="{{ asset('assets/css/dashlite.css?ver=2.4.0') }}">
