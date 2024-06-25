@@ -13,6 +13,7 @@
                 <tr>
                     <th scope="col">S. No.</th>
                     <th scope="col">Category Name</th>
+                    <th scope="col">Listings Count</th>
                     <th scope="col">last Updated On</th>
                     <th scope="col">Created By</th>
                     <th scope="col">Actions</th>
@@ -23,6 +24,7 @@
                 <tr>
                     <td scope="row">{{ ++$key }}</td>
                     <td scope="row">{{ $category->name }}</td>
+                    <td scope="row">{{ count($category->listings) }}</td>
                     <td scope="row">{{ $category->updated_at }}</td>
                     <td scope="row">{{ $category->user->name }}</td>
                     <td scope="row">
