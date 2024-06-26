@@ -16,6 +16,10 @@
             <label for="name">Select file</label>
             <input type="file" id="file" name='data' />
         </div>
+        <div class="mb-3">
+            <label for="name">Removel file</label>
+            <input type="checkbox" id="removel_file" name='removel_file' />
+        </div>
         <div class="d-flex flex-direction-row">
             <button type="submit" class="btn btn-primary" onclick="uploadFile()" class="btn btn-sm btn-success">UPLOAD</button>
             <a href="{{ route('listings.index') }}" class="btn ml-2 btn-sm btn-secondary">CANCEL</a>
