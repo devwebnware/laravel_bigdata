@@ -16,7 +16,7 @@ class GeneralHelper
         $listings = Listing::all();
         $cities = $listings->pluck('city')->filter()->unique()->take(10);
         $states = $listings->pluck('state')->filter()->unique()->take(10);
-        // $countries = $listings->pluck('country')->filter()->unique();
+        $countries = $listings->pluck('country')->filter()->unique();
         $categories = Category::select('id', 'name')->take(10)->get();
         $parent_categories = ParentCategory::select('id', 'name')->take(10)->get();
         $tags = Tag::select('id', 'name')->take(10)->get();
