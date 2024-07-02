@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Tag;
+use App\Models\Report;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\ListingTag;
@@ -230,7 +231,7 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
 
     public function chunkSize(): int
     {
-        return 100; // Change chunk size according to your needs.
+        return 150; // Change chunk size according to your needs.
     }
     public function startRow(): int
     {
