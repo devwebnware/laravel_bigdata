@@ -10,6 +10,7 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
+            $table->string('file_name');
             $table->integer('matched_records');
             $table->integer('new_records');
             $table->timestamps();

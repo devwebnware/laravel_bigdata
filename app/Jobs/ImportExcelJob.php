@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\Tag;
+use App\Models\Report;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\ListingTag;
@@ -21,12 +22,14 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
 {
     protected $mappingData;
     protected $user;
+    protected $report;
 
-    public function __construct($mappingData, $user)
+    public function __construct($mappingData, $user, $report)
     {
         $this->mappingData = $mappingData;
         // Logged in user
         $this->user = $user;
+        $this->report = $report;
     }
 
     public function handle(): void
@@ -60,7 +63,10 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                 $listing = $this->getListing('business_url', $row[$this->mappingData['business_url']]);
             }
             // If listing exists then update the listing data
+
             if ($listing !== null) {
+                $this->report->matched_records = ++$this->report->matched_records;
+                $this->report->update();
                 foreach ($this->mappingData as $key => $value) {
                     // $value = database column name
                     // $key = csv file column name
@@ -143,6 +149,8 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                     }
                 }
             } else {
+                $this->report->new_records = ++$this->report->new_records;
+                $this->report->update();
                 // If listing doesn't exist then create a new listing
                 $listing = new Listing();
                 foreach ($this->mappingData as $key => $value) {
@@ -230,7 +238,7 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
 
     public function chunkSize(): int
     {
-        return 100; // Change chunk size according to your needs.
+        return 150; // Change chunk size according to your needs.
     }
     public function startRow(): int
     {

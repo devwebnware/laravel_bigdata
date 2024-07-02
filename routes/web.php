@@ -80,6 +80,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('import/columns', 'getColumns')->name('import.columns');
         Route::post('filter/export', 'exportFilter')->name('export.filtered');
         Route::get('import/data/status', 'getStatus')->name('import.data.status');
+        Route::get('import/data/report', 'getReport')->name('import.data.report');
         Route::get('data/handel/export', 'handelExport')->name('data.handel.export');
         Route::post('data/handel/import', 'handelImport')->name('data.handel.import');
     });

@@ -228,7 +228,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
 
     public function chunkSize(): int
     {
-        return 100; // Change chunk size according to your needs.
+        return 150; // Change chunk size according to your needs.
     }
 
     public function getCsvSettings(): array
