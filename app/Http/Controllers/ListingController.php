@@ -6,6 +6,7 @@ use SplFileObject;
 use Carbon\Carbon;
 use App\Models\Tag;
 use App\Models\Job;
+use App\Models\Report;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\FailedJob;
@@ -180,14 +181,27 @@ class ListingController extends Controller
         }
         if ($request->filled('headers')) {
             $headers = $request['headers'];
+            // Create an empty file
+            // $originalFileNameWithExtension  = $request->file('data')->getClientOriginalName();
+            // $filename = pathinfo($originalFileNameWithExtension, PATHINFO_FILENAME);
+            // $filePath = storage_path('app/public/' . $filename . '.txt');
+            
+            // Create an empty text file
+            // file_put_contents($filePath, '');
+            $fileName  = $request->file('data')->getClientOriginalName();
+            $report = new Report();
+            $report->file_name = $fileName;
+            $report->matched_records = 0;
+            $report->new_records = 0;
+            $report->save();
             switch ($fileExtension) {
                 case 'xlsx':
-                    $import = new ImportExcelJob($headers, auth()->user());
+                    $import = new ImportExcelJob($headers, auth()->user(), $report);
                     Excel::queueImport($import, $request->file('data'));
                     $this->exportImportLogs(0);
                     return response()->json('success');
                 case 'csv':
-                    $import = new ImportDataJob($headers, auth()->user());
+                    $import = new ImportDataJob($headers, auth()->user(), $report);
                     Excel::queueImport($import, $request->file('data'));
                     $this->exportImportLogs(0);
                     return response()->json('success');
@@ -380,5 +394,11 @@ class ListingController extends Controller
         $log->user_id = auth()->user()->id;
         $log->type = $type; // 1 = export, 0 = import
         $log->save();
+    }
+
+    public function getReport()
+    {
+        $reports = Report::all();
+        return view('backend.report.index', compact('reports'));
     }
 }

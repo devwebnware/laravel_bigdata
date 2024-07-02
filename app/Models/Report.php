@@ -11,5 +11,5 @@ class Report extends Model
 
     protected $table = 'reports';
 
-    protected $fillable = ['matched_records', 'new_records'];
+    protected $fillable = ['file_name', 'matched_records', 'new_records'];
 }
