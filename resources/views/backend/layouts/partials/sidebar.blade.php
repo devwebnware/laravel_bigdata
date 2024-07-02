@@ -38,13 +38,18 @@
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
-                        <a href="{{ route('listing.export.group.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-property-add"></em></span>
+                        <a href="{{ route('listing.export.group.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-link-group"></em></span>
                             <span class="nk-menu-text">Export Groups</span>
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub">
                         <a href="{{ route('listings.import.data.status') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-download-cloud"></em></span>
                             <span class="nk-menu-text">Import Status</span>
+                        </a>
+                    </li>
+                    <li class="nk-menu-item has-sub">
+                        <a href="{{ route('listings.import.data.report') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-file-docs"></em></span>
+                            <span class="nk-menu-text">Import Report</span>
                         </a>
                     </li>
                     <li class="nk-menu-item has-sub active current-page"><a href="#" class="nk-menu-link nk-menu-toggle"><span class="nk-menu-icon"><em class="icon ni ni-list-thumb-alt"></em></span><span class="nk-menu-text">Listing</span></a>
