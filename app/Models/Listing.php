@@ -13,6 +13,7 @@ class Listing extends Model
     protected $fillable = [
         'name',
         'category',
+        'parent_category',
     ];
 
     public function categoryModel()

@@ -177,17 +177,18 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                             break;
                         case 'parent_category':
                             if ($row[$key]) {
-                                $category = ParentCategory::where('name', 'like', "%{$row[$key]}%")->first();
+                                $parentCategory = ParentCategory::where('name', 'like', "%{$row[$key]}%")->first();
+
                                 // If category exists then update the category id
-                                if ($category) {
-                                    $listing->category = $category->id;
+                                if ($parentCategory) {
+                                    $listing->parent_category = $parentCategory->id;
                                 } else {
                                     // If category doesn't exist then create a new category and update the category id
-                                    $category = new ParentCategory();
-                                    $category->name = $row[$key];
-                                    $category->created_by = $this->user->id;
-                                    $category->save();
-                                    $listing->category = $category->id;
+                                    $parentCategory = new ParentCategory();
+                                    $parentCategory->name = $row[$key];
+                                    $parentCategory->created_by = $this->user->id;
+                                    $parentCategory->save();
+                                    $listing->parent_category = $parentCategory->id;
                                 }
                             }
                             break;
