@@ -239,7 +239,7 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
 
     public function chunkSize(): int
     {
-        return 150; // Change chunk size according to your needs.
+        return 50; // Change chunk size according to your needs.
     }
     public function startRow(): int
     {
