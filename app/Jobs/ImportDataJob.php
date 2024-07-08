@@ -21,11 +21,13 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
 {
     protected $mappingData;
     protected $user;
+    protected $report;
 
-    public function __construct($mappingData, $user)
+    public function __construct($mappingData, $user, $report)
     {
         $this->mappingData = $mappingData;
         $this->user = $user;
+        $this->report = $report;
     }
 
     public function handle(): void
@@ -35,6 +37,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
     public function model(array $row)
     {
         try {
+            // Chcek for column existance and get listing accordingly
             if (in_array('id', $this->mappingData)) {
                 $listing = $this->getListing('id', $row[$this->mappingData['id']]);
             } else if (in_array('landing_url_unique', $this->mappingData)) {
@@ -58,7 +61,10 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                 $listing = $this->getListing('business_url', $row[$this->mappingData['business_url']]);
             }
             // If listing exists then update the listing data
+
             if ($listing !== null) {
+                $this->report->matched_records = ++$this->report->matched_records;
+                $this->report->update();
                 foreach ($this->mappingData as $key => $value) {
                     // $value = database column name
                     // $key = csv file column name
@@ -141,6 +147,8 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                     }
                 }
             } else {
+                $this->report->new_records = ++$this->report->new_records;
+                $this->report->update();
                 // If listing doesn't exist then create a new listing
                 $listing = new Listing();
                 foreach ($this->mappingData as $key => $value) {
@@ -167,17 +175,18 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
                             break;
                         case 'parent_category':
                             if ($row[$key]) {
-                                $category = ParentCategory::where('name', 'like', "%{$row[$key]}%")->first();
+                                $parentCategory = ParentCategory::where('name', 'like', "%{$row[$key]}%")->first();
+
                                 // If category exists then update the category id
-                                if ($category) {
-                                    $listing->category = $category->id;
+                                if ($parentCategory) {
+                                    $listing->parent_category = $parentCategory->id;
                                 } else {
                                     // If category doesn't exist then create a new category and update the category id
-                                    $category = new ParentCategory();
-                                    $category->name = $row[$key];
-                                    $category->created_by = $this->user->id;
-                                    $category->save();
-                                    $listing->category = $category->id;
+                                    $parentCategory = new ParentCategory();
+                                    $parentCategory->name = $row[$key];
+                                    $parentCategory->created_by = $this->user->id;
+                                    $parentCategory->save();
+                                    $listing->parent_category = $parentCategory->id;
                                 }
                             }
                             break;
@@ -228,7 +237,7 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
 
     public function chunkSize(): int
     {
-        return 150; // Change chunk size according to your needs.
+        return 50; // Change chunk size according to your needs.
     }
 
     public function getCsvSettings(): array
