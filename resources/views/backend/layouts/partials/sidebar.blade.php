@@ -17,6 +17,13 @@
                             <span class="nk-menu-text">Dashboard</span>
                         </a>
                     </li>
+                    <li class="nk-menu-item has-sub active current-page"><a href="#" class="nk-menu-link nk-menu-toggle"><span class="nk-menu-icon"><em class="icon ni ni-list-thumb-alt"></em></span><span class="nk-menu-text">Listing</span></a>
+                        <ul class="nk-menu-sub">
+                            <li class="nk-menu-item"><a href="{{ route('listings.index') }}" class="nk-menu-link"><span class="nk-menu-text">View Listings</span></a></li>
+                            <li class="nk-menu-item active current-page"><a href="{{ route('listings.data.import') }}" class="nk-menu-link"><span class="nk-menu-text">Import</span></a></li>
+                            <li class="nk-menu-item active current-page"><a href="{{ route('listings.data.export') }}" class="nk-menu-link"><span class="nk-menu-text">Export</span></a></li>
+                        </ul>
+                    </li>
                     <li class="nk-menu-item has-sub">
                         <a href="{{ route('parent.categories.index') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-book"></em></span>
                             <span class="nk-menu-text">Parent Category</span>
@@ -51,13 +58,6 @@
                         <a href="{{ route('listings.import.data.report') }}" class="nk-menu-link"><span class="nk-menu-icon"><em class="icon ni ni-file-docs"></em></span>
                             <span class="nk-menu-text">Import Report</span>
                         </a>
-                    </li>
-                    <li class="nk-menu-item has-sub active current-page"><a href="#" class="nk-menu-link nk-menu-toggle"><span class="nk-menu-icon"><em class="icon ni ni-list-thumb-alt"></em></span><span class="nk-menu-text">Listing</span></a>
-                        <ul class="nk-menu-sub">
-                            <li class="nk-menu-item"><a href="{{ route('listings.index') }}" class="nk-menu-link"><span class="nk-menu-text">View Listings</span></a></li>
-                            <li class="nk-menu-item active current-page"><a href="{{ route('listings.data.import') }}" class="nk-menu-link"><span class="nk-menu-text">Import</span></a></li>
-                            <li class="nk-menu-item active current-page"><a href="{{ route('listings.data.export') }}" class="nk-menu-link"><span class="nk-menu-text">Export</span></a></li>
-                        </ul>
                     </li>
                     @hasrole('admin')
                     <li class="nk-menu-item has-sub">

@@ -65,6 +65,7 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
             // If listing exists then update the listing data
 
             if ($listing !== null) {
+                $this->updateReport('matched'); // 1 = Matched records
                 $this->report->matched_records = ++$this->report->matched_records;
                 $this->report->update();
                 foreach ($this->mappingData as $key => $value) {
@@ -149,8 +150,7 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                     }
                 }
             } else {
-                $this->report->new_records = ++$this->report->new_records;
-                $this->report->update();
+                $this->updateReport('new');
                 // If listing doesn't exist then create a new listing
                 $listing = new Listing();
                 foreach ($this->mappingData as $key => $value) {
@@ -249,5 +249,17 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
     {
         $listing = Listing::where($column, $value)->with('listingTags')->first();
         return $listing;
+    }
+
+    public function updateReport($type)
+    {
+        $report = Report::find($this->report->id);
+        if($type == 'matched' && $report) {
+            $report->matched_records = ++$report->matched_records;
+        } else {
+            $report->new_records = ++$report->new_records;
+        };
+        $report->update();
+        return true;
     }
 }
