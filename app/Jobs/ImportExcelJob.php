@@ -129,6 +129,15 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                                             $listingTag->listing_id = $listing->id;
                                             $listingTag->tag_id = $tagModel->id;
                                             $listingTag->save();
+                                        } else {
+                                            $newTag = new Tag();
+                                            $newTag->name = $tagName;
+                                            $newTag->created_by = $this->user->id;
+                                            $newTag->save();
+                                            $listingTag = new ListingTag();
+                                            $listingTag->listing_id = $listing->id;
+                                            $listingTag->tag_id = $newTag->id;
+                                            $listingTag->save();
                                         }
                                     }
                                 }
@@ -194,6 +203,7 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                             break;
                         case 'tag':
                             if ($row[$key] !== null) {
+                                
                                 // Example data you get inside $row[$key] = tag4,tag5,tag6 || 4,5,6
                                 // Create a array of tags
                                 $tags = explode(",", $row[$key]);
@@ -207,17 +217,27 @@ class ImportExcelJob implements ToModel, WithChunkReading, ShouldQueue, WithHead
                                         $tagModel = Tag::where('name', 'like', "%{$tag}%")->first();
                                     }
                                     // If tag exists then create a pivot relational table for listing and tags
-                                    if ($tagModel) {
+                                    if ($tagModel !== null) {
                                         $listingTag = new ListingTag();
                                         $listingTag->listing_id = $listing->id;
                                         $listingTag->tag_id = $tagModel->id;
+                                        $listingTag->save();
+                                    } else {
+                                        // If tag doesn't exist then create a new tag and create a pivot relational table for listing and tags
+                                        $newTag = new Tag();
+                                        $newTag->name = $tag;
+                                        $newTag->created_by = $this->user->id;
+                                        $newTag->save();
+                                        $listingTag = new ListingTag();
+                                        $listingTag->listing_id = $listing->id;
+                                        $listingTag->tag_id = $newTag->id;
                                         $listingTag->save();
                                     }
                                 }
                             }
                             break;
                         case 'phone_number':
-                            if ($row[$key]) {
+                            if ($row[$key]) { 
                                 // Get only the last 10 digits of the phone number
                                 $number = substr($row[$key], -10);
                                 $listing->$value = $number;

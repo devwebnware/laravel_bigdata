@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('created_by')->references('id')->on('users');
             $table->string('name');
-            $table->string('bg_color');
-            $table->string('color');
+            $table->string('bg_color')->default('#000');
+            $table->string('color')->default('#fff');;
             $table->timestamps();
         });
     }
