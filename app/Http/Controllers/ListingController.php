@@ -161,7 +161,7 @@ class ListingController extends Controller
     {
         $listings = Listing::all();
         if ($listings->isEmpty()) {
-            return redirect()->back()->with('error', 'Not able to fetch the listings.');
+            return redirect()->back()->with('error', 'No listings found to export.');
         }
         $this->exportImportLogs(1);
         return Excel::download(new ListingsExport($listings), 'listings.xlsx');
@@ -180,7 +180,7 @@ class ListingController extends Controller
             $fileExtension = $filePath->getClientOriginalExtension();
         }
         if ($request->filled('headers')) {
-            $headers = $request['headers'];
+        $headers = $request['headers'];
             // Create an empty file
             // $originalFileNameWithExtension  = $request->file('data')->getClientOriginalName();
             // $filename = pathinfo($originalFileNameWithExtension, PATHINFO_FILENAME);
