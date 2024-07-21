@@ -8,26 +8,25 @@ use App\Models\Category;
 use App\Models\ListingTag;
 use App\Models\ParentCategory;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
 use Maatwebsite\Excel\Concerns\ToModel;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
-use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
 
-class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadingRow
+class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadingRow, WithBatchInserts
 {
     protected $mappingData;
     protected $user;
     protected $report;
+    protected $chunkSize;
 
-    public function __construct($mappingData, $user, $report)
+    public function __construct($mappingData, $user, $report, $chunkSize)
     {
         $this->mappingData = $mappingData;
         $this->user = $user;
         $this->report = $report;
+        $this->chunkSize = $chunkSize;
     }
 
     public function handle(): void
@@ -237,7 +236,12 @@ class ImportDataJob implements ToModel, WithChunkReading, ShouldQueue, WithHeadi
 
     public function chunkSize(): int
     {
-        return 50; // Change chunk size according to your needs.
+        return $this->chunkSize; // Change chunk size according to your needs.
+    }
+
+    public function batchSize(): int
+    {
+        return $this->chunkSize;
     }
 
     public function getCsvSettings(): array
